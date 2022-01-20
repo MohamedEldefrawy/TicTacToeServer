@@ -1,5 +1,5 @@
 # TicTacToeServer
-ITI TicTacToe Client project
+ITI TicTacToe Server project
 
 ## Steps
 1. Clone project 
