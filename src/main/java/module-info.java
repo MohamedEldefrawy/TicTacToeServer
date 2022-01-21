@@ -6,4 +6,6 @@ module com.server.server {
 
     opens com.server.server to javafx.fxml;
     exports com.server.server;
+    exports controllers;
+    opens controllers to javafx.fxml;
 }
