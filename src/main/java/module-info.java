@@ -4,8 +4,8 @@ module com.server.server {
 
     requires org.kordamp.bootstrapfx.core;
 
-    opens com.server.server to javafx.fxml;
-    exports com.server.server;
+    opens com.server to javafx.fxml;
+    exports com.server;
     exports controllers;
     opens controllers to javafx.fxml;
 }
