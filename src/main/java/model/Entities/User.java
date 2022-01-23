@@ -14,7 +14,8 @@ public class User {
 
     private int draws;
 
-    public User(String userName, String password, int wins, int losses, int draws) {
+    public User(int id, String userName, String password, int wins, int losses, int draws) {
+        this.id = id;
         this.userName = userName;
         this.password = password;
         this.wins = wins;

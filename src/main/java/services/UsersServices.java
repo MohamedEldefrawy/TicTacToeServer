@@ -2,17 +2,22 @@ package services;
 
 
 import model.DbConnection;
+import model.Entities.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UsersServices {
 
+    // Fields
     private Connection connection;
     private PreparedStatement preparedStatement;
+    private Statement statement;
     private String query;
 
+
+    // user CRUD
     public void createUser() {
         connection = new DbConnection().getConnection();
         query = "insert into Users (userName,password,wins,losses,draws) values (?,?,?,?,?)";
@@ -28,6 +33,34 @@ public class UsersServices {
         }
     }
 
+    public List<User> getAllUsers() {
+        query = "select * from users";
+        connection = new DbConnection().getConnection();
+        List<User> users = new ArrayList<>();
+
+        try {
+            statement = connection.createStatement();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            ResultSet resultSet = statement.executeQuery(query);
+            while (resultSet.next()) {
+                users.add(new User(resultSet.getInt(1), resultSet.getString(2),
+                        resultSet.getString(3),
+                        resultSet.getInt(4), resultSet.getInt(5),
+                        resultSet.getInt(6)));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
+    }
+
+
+    // Connection Utilities
     public PreparedStatement getPreparedStatement() {
         return preparedStatement;
     }

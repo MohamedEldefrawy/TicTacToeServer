@@ -10,6 +10,7 @@ import services.UsersServices;
 import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class HelloController implements Initializable {
@@ -28,7 +29,7 @@ public class HelloController implements Initializable {
 
         User user = new User();
 
-        user.setUserName("jajajaja");
+        user.setUserName("foul");
         user.setPassword("123");
         user.setWins(1);
         user.setLosses(1);
@@ -45,7 +46,10 @@ public class HelloController implements Initializable {
             services.saveChanges();
             preparedStatement.close();
             services.closeConnection();
+
+            List<User> users = services.getAllUsers();
             System.out.println(count.length + " rows changed");
+            users.stream().forEach(user1 -> System.out.println(user1.getUserName()));
         } catch (SQLException e) {
             e.printStackTrace();
         }
