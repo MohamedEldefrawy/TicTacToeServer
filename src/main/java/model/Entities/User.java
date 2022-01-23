@@ -66,4 +66,11 @@ public class User {
         this.draws = draws;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }

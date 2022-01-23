@@ -1,14 +1,11 @@
 package services;
 
-
 import model.DbConnection;
-import model.Entities.User;
+import model.Entities.Game;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
-public class UsersServices {
+public class UserGameService {
 
     // Fields
     private Connection connection;
@@ -16,11 +13,12 @@ public class UsersServices {
     private Statement statement;
     private String query;
 
-
     // user CRUD
-    public void createUser() {
-        connection = new DbConnection().getConnection();
-        query = "insert into Users (userName,password,wins,losses,draws) values (?,?,?,?,?)";
+    public void saveGame() {
+        if (connection == null)
+            connection = new DbConnection().getConnection();
+        query = "insert into usergames (playerOneId,playerTwoId,WinnerId,gameBoard) values (?,?,?,?)";
+
         try {
             connection.setAutoCommit(false);
         } catch (SQLException e) {
@@ -33,11 +31,12 @@ public class UsersServices {
         }
     }
 
-    public List<User> getAllUsers() {
-        query = "select * from users";
+    public Game getSavedGame(int playerOneId, int playerTwoId) {
+        query = "select * from usergames where playerOneId =" + playerOneId + "and playerTwoId =" + playerTwoId;
+
+        Game game = new Game();
         if (connection == null)
             connection = new DbConnection().getConnection();
-        List<User> users = new ArrayList<>();
 
         try {
             statement = connection.createStatement();
@@ -47,22 +46,20 @@ public class UsersServices {
 
         try {
             ResultSet resultSet = statement.executeQuery(query);
-            while (resultSet.next()) {
-                users.add(new User(resultSet.getInt(1), resultSet.getString(2),
-                        resultSet.getString(3),
-                        resultSet.getInt(4), resultSet.getInt(5),
-                        resultSet.getInt(6)));
-            }
 
+            while (resultSet.next()) {
+                game.setId(resultSet.getInt(1));
+                game.setFirstPlayerId(resultSet.getInt(2));
+                game.setSecondPlayerId(resultSet.getInt(3));
+                game.setWinnerId(resultSet.getInt(4));
+                game.setGameBoard(resultSet.getString(5));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return users;
-    }
-    public User getUserbyName(String userName) {
-        return getAllUsers().stream().filter(user -> user.getUserName().equals(userName)).findFirst().get();
-    }
 
+        return game;
+    }
 
     // Connection Utilities
     public PreparedStatement getPreparedStatement() {
