@@ -32,10 +32,10 @@ public class UsersServices {
             e.printStackTrace();
         }
     }
-
     public List<User> getAllUsers() {
         query = "select * from users";
-        connection = new DbConnection().getConnection();
+        if (connection == null)
+            connection = new DbConnection().getConnection();
         List<User> users = new ArrayList<>();
 
         try {
@@ -57,6 +57,9 @@ public class UsersServices {
             e.printStackTrace();
         }
         return users;
+    }
+    public User getUserbyName(String userName) {
+        return getAllUsers().stream().filter(user -> user.getUserName().equals(userName)).findFirst().get();
     }
 
 

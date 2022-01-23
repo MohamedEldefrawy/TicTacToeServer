@@ -29,7 +29,7 @@ public class HelloController implements Initializable {
 
         User user = new User();
 
-        user.setUserName("foul");
+        user.setUserName("hash");
         user.setPassword("123");
         user.setWins(1);
         user.setLosses(1);
@@ -45,11 +45,17 @@ public class HelloController implements Initializable {
 
             services.saveChanges();
             preparedStatement.close();
-            services.closeConnection();
 
             List<User> users = services.getAllUsers();
             System.out.println(count.length + " rows changed");
             users.stream().forEach(user1 -> System.out.println(user1.getUserName()));
+
+            User selectedUser = services.getUserbyName("dafro");
+
+            System.out.println(selectedUser.getUserName() + " Wins = " + selectedUser.getWins());
+
+
+            services.closeConnection();
         } catch (SQLException e) {
             e.printStackTrace();
         }
