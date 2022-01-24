@@ -18,7 +18,7 @@ public class UsersServices {
 
 
     // user CRUD
-    public void createUser() {
+    public void createUser(User newUser) {
         connection = new DbConnection().getConnection();
         query = "insert into Users (userName,password,wins,losses,draws) values (?,?,?,?,?)";
         try {
@@ -28,6 +28,11 @@ public class UsersServices {
         }
         try {
             this.preparedStatement = connection.prepareStatement(query);
+            this.preparedStatement.setString(1, newUser.getUserName());
+            this.preparedStatement.setString(2, newUser.getPassword());
+            this.preparedStatement.setInt(3, newUser.getWins());
+            this.preparedStatement.setInt(4, newUser.getLosses());
+            this.preparedStatement.setInt(5, newUser.getDraws());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -64,9 +69,28 @@ public class UsersServices {
         return getAllUsers().stream().filter(user -> user.getUserName().equals(userName)).findFirst().get();
     }
 
-    public User getUserById(int id) {
-        return getAllUsers().stream().filter(user -> user.getId() == id).findFirst().get();
+    public void updateUser(User user) {
+        User selectedUser = getUserbyName(user.getUserName());
+        selectedUser.setWins(user.getWins());
+        selectedUser.setLosses(user.getLosses());
+        selectedUser.setDraws(user.getDraws());
 
+        connection = new DbConnection().getConnection();
+        query = "update Users set wins = ? , losses = ? , draws = ?  where userName = ?";
+        try {
+            connection.setAutoCommit(false);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            this.preparedStatement = connection.prepareStatement(query);
+            this.preparedStatement.setInt(1, user.getWins());
+            this.preparedStatement.setInt(2, user.getLosses());
+            this.preparedStatement.setInt(3, user.getDraws());
+            this.preparedStatement.setString(4, user.getUserName());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 
