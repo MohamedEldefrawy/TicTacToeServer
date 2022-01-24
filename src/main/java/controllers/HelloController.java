@@ -6,10 +6,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import model.Entities.Game;
 import services.UserGameService;
+import services.UsersServices;
 
 import java.net.URL;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class HelloController implements Initializable {
@@ -22,34 +21,38 @@ public class HelloController implements Initializable {
 
     @FXML
     protected void onHelloButtonClick() {
-//        UsersServices services = new UsersServices();
+        UsersServices services = new UsersServices();
         UserGameService gameService = new UserGameService();
         Game game = new Game();
 //        services.createUser();
 //        PreparedStatement preparedStatement = services.getPreparedStatement();
 
-        gameService.saveGame();
-        game.setFirstPlayerId(5);
-        game.setSecondPlayerId(6);
-        game.setWinnerId(5);
-        game.setGameBoard("123456789");
-        PreparedStatement preparedStatement = gameService.getPreparedStatement();
+//        gameService.saveGame();
+//        game.setFirstPlayerId(5);
+//        game.setSecondPlayerId(6);
+//        game.setWinnerId(5);
+//        game.setGameBoard("123456789");
+//        PreparedStatement preparedStatement = gameService.getPreparedStatement();
+//
+//        try {
+//            preparedStatement.setInt(1, game.getFirstPlayerId());
+//            preparedStatement.setInt(2, game.getSecondPlayerId());
+//            preparedStatement.setInt(3, game.getWinnerId());
+//            preparedStatement.setString(4, game.getGameBoard());
+//            preparedStatement.addBatch();
+//            int[] count = preparedStatement.executeBatch();
+//            gameService.saveChanges();
+//            System.out.println(count.length + " rows changed");
+//
+//            preparedStatement.close();
+//            gameService.closeConnection();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
 
-        try {
-            preparedStatement.setInt(1, game.getFirstPlayerId());
-            preparedStatement.setInt(2, game.getSecondPlayerId());
-            preparedStatement.setInt(3, game.getWinnerId());
-            preparedStatement.setString(4, game.getGameBoard());
-            preparedStatement.addBatch();
-            int[] count = preparedStatement.executeBatch();
-            gameService.saveChanges();
-            System.out.println(count.length + " rows changed");
-
-            preparedStatement.close();
-            gameService.closeConnection();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+//        Game selectedGame = gameService.getSavedGame(1, 4);
+//        System.out.println(selectedGame.getWinnerId());
+//        System.out.println("Winner is " + services.getUserById(selectedGame.getWinnerId()));
 
 
 //        User user = new User();

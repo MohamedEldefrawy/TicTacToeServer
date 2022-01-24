@@ -59,8 +59,14 @@ public class UsersServices {
         }
         return users;
     }
+
     public User getUserbyName(String userName) {
         return getAllUsers().stream().filter(user -> user.getUserName().equals(userName)).findFirst().get();
+    }
+
+    public User getUserById(int id) {
+        return getAllUsers().stream().filter(user -> user.getId() == id).findFirst().get();
+
     }
 
 

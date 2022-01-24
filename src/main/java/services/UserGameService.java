@@ -32,11 +32,11 @@ public class UserGameService {
     }
 
     public Game getSavedGame(int playerOneId, int playerTwoId) {
-        query = "select * from usergames where playerOneId =" + playerOneId + "and playerTwoId =" + playerTwoId;
+        query = "select * from usergames where playerOneId =" + playerOneId + " and playerTwoId =" + playerTwoId;
 
         Game game = new Game();
-        if (connection == null)
-            connection = new DbConnection().getConnection();
+
+        connection = new DbConnection().getConnection();
 
         try {
             statement = connection.createStatement();
@@ -58,6 +58,7 @@ public class UserGameService {
             e.printStackTrace();
         }
 
+        System.out.println("Winner Id" + game.getFirstPlayerId());
         return game;
     }
 
