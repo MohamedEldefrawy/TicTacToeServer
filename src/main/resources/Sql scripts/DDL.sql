@@ -20,6 +20,7 @@ CREATE TABLE `users` (
   `wins` int DEFAULT NULL,
   `losses` int DEFAULT NULL,
   `draws` int DEFAULT NULL,
+  `isLoggedIn` tinyint DEFAULT false,
   PRIMARY KEY (`id`),
   UNIQUE KEY `userName` (`userName`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
