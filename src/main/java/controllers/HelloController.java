@@ -4,11 +4,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import model.DTOs.RecordDto;
 import model.Entities.User;
+import services.GameServices;
+import services.RecordsServices;
 import services.UsersServices;
 
 import java.net.URL;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
@@ -22,35 +24,77 @@ public class HelloController implements Initializable {
 
     @FXML
     protected void onHelloButtonClick() {
-        UsersServices services = new UsersServices();
-        services.createUser();
-        PreparedStatement preparedStatement = services.getPreparedStatement();
 
-        User user = new User();
+        welcomeText.setText("Welcome to JavaFX Application!");
+        UsersServices usersServices = new UsersServices();
+        GameServices gameServices = new GameServices();
+        RecordsServices recordsServices = new RecordsServices();
 
-        user.setUserName("jajajaja");
-        user.setPassword("123");
-        user.setWins(1);
-        user.setLosses(1);
-        user.setDraws(1);
+        // Create user
+
+
+      /*  User newUser = new User();
+        newUser.setUserName("MO");
+        newUser.setPassword("1234");
+        usersServices.createUser(newUser);
         try {
-            preparedStatement.setString(1, user.getUserName());
-            preparedStatement.setString(2, user.getPassword());
-            preparedStatement.setInt(3, user.getWins());
-            preparedStatement.setInt(4, user.getLosses());
-            preparedStatement.setInt(5, user.getDraws());
-            preparedStatement.addBatch();
-            int[] count = preparedStatement.executeBatch();
+            usersServices.getPreparedStatement().execute();
+            usersServices.saveChanges();
 
-            services.saveChanges();
-            preparedStatement.close();
-            services.closeConnection();
-            System.out.println(count.length + " rows changed");
+            usersServices.closeConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }*/
+
+
+        // Update user wins, loss and draws
+
+        /* User newUser = new User();
+        newUser.setUserName("Dafro");
+        newUser.setWins(1);
+        usersServices.updateUser(newUser);
+        try {
+            usersServices.getPreparedStatement().execute();
+            usersServices.saveChanges();
+            usersServices.closeConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }*/
+
+        /*List<User> userList = usersServices.getAllUsers();
+
+        GameDto gameDto = new GameDto();
+        gameDto.setPlayerOneName(userList.get(0).getUserName());
+        gameDto.setPlayerTwoName(userList.get(1).getUserName());
+        gameServices.startGame(gameDto);
+        try {
+            gameServices.getPreparedStatement().execute();
+            gameServices.saveChanges();
+
+            gameServices.closeConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }*/
+
+      /*  User newUser = new User();
+        newUser.setUserName("DAFRO");
+        newUser.setWins(1);
+        RecordDto recordDto = new RecordDto();
+        recordDto.setRequesterName(newUser.getUserName());
+
+        recordDto.setGameId(gameServices.getGameId());
+        recordDto.setSteps("123567854");
+        recordsServices.createRecord(recordDto);
+
+        try {
+            recordsServices.getPreparedStatement().execute();
+            recordsServices.saveChanges();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        welcomeText.setText("Welcome to JavaFX Application!");
+*/
     }
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

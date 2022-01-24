@@ -2,7 +2,6 @@ package model.Entities;
 
 
 public class User {
-    private int id;
 
     private String userName;
 
@@ -13,6 +12,8 @@ public class User {
     private int losses;
 
     private int draws;
+
+    private boolean isLoggedIn;
 
     public User(String userName, String password, int wins, int losses, int draws) {
         this.userName = userName;
@@ -65,4 +66,12 @@ public class User {
         this.draws = draws;
     }
 
+
+    public boolean isLoggedIn() {
+        return isLoggedIn;
+    }
+
+    public void setLoggedIn(boolean loggedIn) {
+        isLoggedIn = loggedIn;
+    }
 }
