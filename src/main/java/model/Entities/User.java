@@ -14,6 +14,8 @@ public class User {
 
     private int draws;
 
+    private boolean isLoggedIn;
+
     public User(int id, String userName, String password, int wins, int losses, int draws) {
         this.id = id;
         this.userName = userName;
@@ -72,5 +74,13 @@ public class User {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public boolean isLoggedIn() {
+        return isLoggedIn;
+    }
+
+    public void setLoggedIn(boolean loggedIn) {
+        isLoggedIn = loggedIn;
     }
 }

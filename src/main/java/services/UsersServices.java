@@ -53,9 +53,11 @@ public class UsersServices {
         try {
             ResultSet resultSet = statement.executeQuery(query);
             while (resultSet.next()) {
-                users.add(new User(resultSet.getInt(1), resultSet.getString(2),
+                users.add(new User(resultSet.getInt(1),
+                        resultSet.getString(2),
                         resultSet.getString(3),
-                        resultSet.getInt(4), resultSet.getInt(5),
+                        resultSet.getInt(4),
+                        resultSet.getInt(5),
                         resultSet.getInt(6)));
             }
 
@@ -66,7 +68,7 @@ public class UsersServices {
     }
 
     public User getUserbyName(String userName) {
-        return getAllUsers().stream().filter(user -> user.getUserName().equals(userName)).findFirst().get();
+        return getAllUsers().stream().filter(user -> user.getUserName().equalsIgnoreCase(userName)).findFirst().get();
     }
 
     public void updateUser(User user) {
@@ -91,6 +93,41 @@ public class UsersServices {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private void updateStatus(User user, boolean isLoggedIn) {
+        query = "update users set isLoggedIn = " + isLoggedIn + " where userName = " + "'" + user.getUserName() + "'";
+
+        if (connection == null)
+            connection = new DbConnection().getConnection();
+
+        try {
+            statement = connection.createStatement();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            statement.execute(query);
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean login(User user) {
+        boolean result = false;
+        User selectedUser = getUserbyName(user.getUserName());
+        if (selectedUser != null && selectedUser.getPassword().equals(user.getPassword())) {
+            updateStatus(selectedUser, true);
+            result = true;
+        }
+        return result;
+    }
+
+    public void logout(User user) {
+        updateStatus(user, false);
     }
 
 

@@ -21,6 +21,7 @@ public class HelloController implements Initializable {
         welcomeText.setText("Welcome to JavaFX Application!");
     }
 
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         btnWelcome.setOnAction(actionEvent -> onHelloButtonClick());
