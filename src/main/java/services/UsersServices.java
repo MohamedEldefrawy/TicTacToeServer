@@ -46,38 +46,34 @@ public class UsersServices {
 
         try {
             statement = connection.createStatement();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        try {
             ResultSet resultSet = statement.executeQuery(query);
             while (resultSet.next()) {
-                users.add(new User(resultSet.getInt(1),
-                        resultSet.getString(2),
-                        resultSet.getString(3),
-                        resultSet.getInt(4),
-                        resultSet.getInt(5),
-                        resultSet.getInt(6)));
-            }
+                User user = new User();
+                user.setUserName(resultSet.getString(1));
+                user.setPassword(resultSet.getString(2));
+                user.setWins(resultSet.getInt(3));
+                user.setLosses(resultSet.getInt(4));
+                user.setDraws(resultSet.getInt(5));
+                user.setLoggedIn(resultSet.getBoolean(6));
 
+                users.add(user);
+            }
+            statement.close();
+            resultSet.close();
+            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return users;
     }
 
-    public User getUserbyName(String userName) {
+    public User getUserByName(String userName) {
         return getAllUsers().stream().filter(user -> user.getUserName().equalsIgnoreCase(userName)).findFirst().get();
     }
 
     public void updateUser(User user) {
-        User selectedUser = getUserbyName(user.getUserName());
-        selectedUser.setWins(user.getWins());
-        selectedUser.setLosses(user.getLosses());
-        selectedUser.setDraws(user.getDraws());
-
         connection = new DbConnection().getConnection();
+
         query = "update Users set wins = ? , losses = ? , draws = ?  where userName = ?";
         try {
             connection.setAutoCommit(false);
@@ -118,7 +114,7 @@ public class UsersServices {
 
     public boolean login(User user) {
         boolean result = false;
-        User selectedUser = getUserbyName(user.getUserName());
+        User selectedUser = getUserByName(user.getUserName());
         if (selectedUser != null && selectedUser.getPassword().equals(user.getPassword())) {
             updateStatus(selectedUser, true);
             result = true;
@@ -129,7 +125,6 @@ public class UsersServices {
     public void logout(User user) {
         updateStatus(user, false);
     }
-
 
     // Connection Utilities
     public PreparedStatement getPreparedStatement() {

@@ -1,54 +1,48 @@
 package model.Entities;
 
+import java.time.LocalDateTime;
+
 public class Game {
     public Game() {
     }
 
-    public Integer getFirstPlayerId() {
-        return firstPlayerId;
+    public String getPlayerOneName() {
+        return playerOneName;
     }
 
-    public void setFirstPlayerId(Integer firstPlayerId) {
-        this.firstPlayerId = firstPlayerId;
+    public void setPlayerOneName(String playerOneName) {
+        this.playerOneName = playerOneName;
     }
 
-    public Integer getSecondPlayerId() {
-        return secondPlayerId;
+    public String getPlayerTwoName() {
+        return playerTwoName;
     }
 
-    public void setSecondPlayerId(Integer secondPlayerId) {
-        this.secondPlayerId = secondPlayerId;
+    public void setPlayerTwoName(String playerTwoName) {
+        this.playerTwoName = playerTwoName;
     }
 
-    public Integer getWinnerId() {
-        return winnerId;
+    public int getWinner() {
+        return winner;
     }
 
-    public void setWinnerId(Integer winnerId) {
-        this.winnerId = winnerId;
-    }
-
-    public String getGameBoard() {
-        return gameBoard;
-    }
-
-    public void setGameBoard(String gameBoard) {
-        this.gameBoard = gameBoard;
+    public void setWinner(int winner) {
+        this.winner = winner;
     }
 
     private int id;
-    private Integer firstPlayerId;
-    private Integer secondPlayerId;
-    private Integer winnerId;
-    private String gameBoard;
+    private String playerOneName;
+    private String playerTwoName;
+    private int winner;    //   1 , 2 ,  3     Winner
+    private LocalDateTime timeStamp;
 
 
-    public Game(int id, Integer firstPlayerId, Integer secondPlayerId, Integer winnerId, String gameBoard) {
+    public Game(int id, String playerOneName, String playerTwoName, Integer winner) {
         this.id = id;
-        this.firstPlayerId = firstPlayerId;
-        this.secondPlayerId = secondPlayerId;
-        this.winnerId = winnerId;
-        this.gameBoard = gameBoard;
+        this.playerOneName = playerOneName;
+        this.playerTwoName = playerTwoName;
+        this.winner = winner;
+        this.timeStamp = LocalDateTime.now();
     }
 
     public int getId() {
