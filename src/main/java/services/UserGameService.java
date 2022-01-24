@@ -14,7 +14,28 @@ public class UserGameService {
     private String query;
 
     // user CRUD
-    public void saveGame() {
+    private void clearPreviousSave(Game game) {
+        if (connection == null)
+            connection = new DbConnection().getConnection();
+        query = "delete from usergames where playerOneId = " + game.getFirstPlayerId();
+
+        try {
+            statement = connection.createStatement();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            statement.execute(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void saveGame(Game game) {
+        clearPreviousSave(game);
+
         if (connection == null)
             connection = new DbConnection().getConnection();
         query = "insert into usergames (playerOneId,playerTwoId,WinnerId,gameBoard) values (?,?,?,?)";
@@ -26,6 +47,14 @@ public class UserGameService {
         }
         try {
             this.preparedStatement = connection.prepareStatement(query);
+            this.preparedStatement.setInt(1, game.getFirstPlayerId());
+            if (game.getSecondPlayerId() != null)
+                this.preparedStatement.setInt(2, game.getSecondPlayerId());
+            else
+                this.preparedStatement.setNull(2, Types.NULL);
+
+            this.preparedStatement.setInt(3, game.getWinnerId());
+            this.preparedStatement.setString(4, game.getGameBoard());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -36,7 +65,8 @@ public class UserGameService {
 
         Game game = new Game();
 
-        connection = new DbConnection().getConnection();
+        if (connection == null)
+            connection = new DbConnection().getConnection();
 
         try {
             statement = connection.createStatement();

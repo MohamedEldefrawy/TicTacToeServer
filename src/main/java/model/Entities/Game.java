@@ -4,27 +4,27 @@ public class Game {
     public Game() {
     }
 
-    public int getFirstPlayerId() {
+    public Integer getFirstPlayerId() {
         return firstPlayerId;
     }
 
-    public void setFirstPlayerId(int firstPlayerId) {
+    public void setFirstPlayerId(Integer firstPlayerId) {
         this.firstPlayerId = firstPlayerId;
     }
 
-    public int getSecondPlayerId() {
+    public Integer getSecondPlayerId() {
         return secondPlayerId;
     }
 
-    public void setSecondPlayerId(int secondPlayerId) {
+    public void setSecondPlayerId(Integer secondPlayerId) {
         this.secondPlayerId = secondPlayerId;
     }
 
-    public int getWinnerId() {
+    public Integer getWinnerId() {
         return winnerId;
     }
 
-    public void setWinnerId(int winnerId) {
+    public void setWinnerId(Integer winnerId) {
         this.winnerId = winnerId;
     }
 
@@ -37,13 +37,13 @@ public class Game {
     }
 
     private int id;
-    private int firstPlayerId;
-    private int secondPlayerId;
-    private int winnerId;
+    private Integer firstPlayerId;
+    private Integer secondPlayerId;
+    private Integer winnerId;
     private String gameBoard;
 
 
-    public Game(int id, int firstPlayerId, int secondPlayerId, int winnerId, String gameBoard) {
+    public Game(int id, Integer firstPlayerId, Integer secondPlayerId, Integer winnerId, String gameBoard) {
         this.id = id;
         this.firstPlayerId = firstPlayerId;
         this.secondPlayerId = secondPlayerId;
