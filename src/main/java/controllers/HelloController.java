@@ -4,14 +4,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import model.DTOs.RecordDto;
-import model.Entities.User;
 import services.GameServices;
 import services.RecordsServices;
 import services.UsersServices;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class HelloController implements Initializable {

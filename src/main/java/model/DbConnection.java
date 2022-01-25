@@ -19,7 +19,7 @@ public class DbConnection {
 
             // Change them
             String username = "root";
-            String password = "1234";
+            String password = "admin";
 
             this.connection = DriverManager.getConnection(url, username, password);
         } catch (SQLException e) {

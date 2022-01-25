@@ -13,7 +13,7 @@ public class User {
 
     private int draws;
 
-    private boolean isLoggedIn;
+    private boolean status;
 
     public User(String userName, String password, int wins, int losses, int draws) {
         this.userName = userName;
@@ -67,11 +67,11 @@ public class User {
     }
 
 
-    public boolean isLoggedIn() {
-        return isLoggedIn;
+    public boolean getStatus() {
+        return status;
     }
 
-    public void setLoggedIn(boolean loggedIn) {
-        isLoggedIn = loggedIn;
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 }
