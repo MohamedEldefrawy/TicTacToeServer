@@ -1,9 +1,6 @@
 package model.Utilities;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
 
 public class JsonBuilder {
 
@@ -12,10 +9,9 @@ public class JsonBuilder {
         return gson.toJson(object);
     }
 
-    public static <T> T deSerializeObject(String json) {
-        Type typeOfT = new TypeToken<T>() {
-        }.getType();
+    public static <T> T deSerializeObject(String json, Class<T> type) {
         Gson gson = new Gson();
-        return gson.fromJson(json, typeOfT);
+        return gson.fromJson(json, type);
     }
+
 }

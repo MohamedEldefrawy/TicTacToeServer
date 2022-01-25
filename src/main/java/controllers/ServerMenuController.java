@@ -42,8 +42,6 @@ public class ServerMenuController implements Initializable {
             list.add(user);
         }
 
-        list.stream().forEach(user -> System.out.println(user.getStatus()));
-
         return list;
     }
 
