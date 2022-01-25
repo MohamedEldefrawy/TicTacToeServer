@@ -30,6 +30,8 @@ public class HelloController implements Initializable {
         GameServices gameServices = new GameServices();
         RecordsServices recordsServices = new RecordsServices();
 
+        usersServices.getAllUsers().stream().forEach(user -> System.out.println(user.getUserName()));
+
         // Create user
 
 

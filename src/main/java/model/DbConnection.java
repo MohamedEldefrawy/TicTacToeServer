@@ -6,7 +6,6 @@ import java.sql.SQLException;
 
 public class DbConnection {
     private Connection connection;
-
     public DbConnection() {
         try {
 
@@ -20,7 +19,7 @@ public class DbConnection {
 
             // Change them
             String username = "root";
-            String password = "admin";
+            String password = "1234";
 
             this.connection = DriverManager.getConnection(url, username, password);
         } catch (SQLException e) {
