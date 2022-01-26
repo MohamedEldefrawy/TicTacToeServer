@@ -2,13 +2,13 @@ package model.DTOs;
 
 public class GameDto {
     private String playerOneName;
-    private int whoWins;
+    private String whoWins;
 
-    public int getWhoWins() {
+    public String getWhoWins() {
         return whoWins;
     }
 
-    public void setWhoWins(int whoWins) {
+    public void setWhoWins(String whoWins) {
         this.whoWins = whoWins;
     }
 

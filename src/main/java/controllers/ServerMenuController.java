@@ -45,7 +45,7 @@ public class ServerMenuController implements Initializable {
     @FXML
     public TableColumn<Game, String> col_player_two_name;
     @FXML
-    public TableColumn<Game, Integer> col_winner;
+    public TableColumn<Game, String> col_winner;
     @FXML
     public TableColumn<Game, LocalDateTime> col_time;
     //records table columns
@@ -109,7 +109,7 @@ public class ServerMenuController implements Initializable {
         col_game_ID.setCellValueFactory(new PropertyValueFactory<Game, Integer>("id"));
         col_player_one_name.setCellValueFactory(new PropertyValueFactory<Game, String>("playerOneName"));
         col_player_two_name.setCellValueFactory(new PropertyValueFactory<Game, String>("playerTwoName"));
-        col_winner.setCellValueFactory(new PropertyValueFactory<Game, Integer>("Winner"));
+        col_winner.setCellValueFactory(new PropertyValueFactory<Game, String>("Winner"));
         col_time.setCellValueFactory(new PropertyValueFactory<Game, LocalDateTime>("timeStamp"));
         games_table.setItems(gamesObservableList);
 

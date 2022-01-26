@@ -8,11 +8,11 @@ public class Game {
     private int id;
     private String playerOneName;
     private String playerTwoName;
-    private int winner;    //   1 , 2 ,  3     Winner
+    private String winner;
     private LocalDateTime timeStamp;
 
 
-    public Game(int id, String playerOneName, String playerTwoName, Integer winner) {
+    public Game(int id, String playerOneName, String playerTwoName, String winner) {
         this.id = id;
         this.playerOneName = playerOneName;
         this.playerTwoName = playerTwoName;
@@ -44,11 +44,11 @@ public class Game {
         this.playerTwoName = playerTwoName;
     }
 
-    public int getWinner() {
+    public String getWinner() {
         return winner;
     }
 
-    public void setWinner(int winner) {
+    public void setWinner(String winner) {
         this.winner = winner;
     }
 
