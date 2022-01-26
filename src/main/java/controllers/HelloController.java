@@ -4,14 +4,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import model.DTOs.RecordDto;
-import model.Entities.User;
+import model.DTOs.LoginUserDto;
+import model.Utilities.JsonBuilder;
 import services.GameServices;
 import services.RecordsServices;
 import services.UsersServices;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class HelloController implements Initializable {
@@ -29,6 +28,8 @@ public class HelloController implements Initializable {
         UsersServices usersServices = new UsersServices();
         GameServices gameServices = new GameServices();
         RecordsServices recordsServices = new RecordsServices();
+
+        usersServices.getAllUsers().stream().forEach(user -> System.out.println(user.getUserName()));
 
         // Create user
 

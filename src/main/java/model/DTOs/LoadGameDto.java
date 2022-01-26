@@ -4,7 +4,7 @@ public class LoadGameDto {
     private int gameId;
     private String playerOneName;
     private String playerTwoName;
-    private int winner;
+    private String winner;
     private String timeStamp;
     private String requesterName;
     private String steps;
@@ -33,11 +33,11 @@ public class LoadGameDto {
         this.playerTwoName = playerTwoName;
     }
 
-    public int getWinner() {
+    public String getWinner() {
         return winner;
     }
 
-    public void setWinner(int winner) {
+    public void setWinner(String winner) {
         this.winner = winner;
     }
 

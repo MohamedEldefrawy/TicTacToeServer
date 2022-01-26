@@ -54,7 +54,7 @@ public class UsersServices {
                 user.setWins(resultSet.getInt(3));
                 user.setLosses(resultSet.getInt(4));
                 user.setDraws(resultSet.getInt(5));
-                user.setLoggedIn(resultSet.getBoolean(6));
+                user.setStatus(resultSet.getBoolean(6));
 
                 users.add(user);
             }
