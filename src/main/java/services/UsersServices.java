@@ -18,7 +18,7 @@ public class UsersServices {
 
 
     // user CRUD
-    public void createUser(User newUser) {
+    public void createUser(String username, String password,int wins,int losses,int draws) {
         connection = new DbConnection().getConnection();
         query = "insert into Users (userName,password,wins,losses,draws) values (?,?,?,?,?)";
         try {
@@ -28,11 +28,11 @@ public class UsersServices {
         }
         try {
             this.preparedStatement = connection.prepareStatement(query);
-            this.preparedStatement.setString(1, newUser.getUserName());
-            this.preparedStatement.setString(2, newUser.getPassword());
-            this.preparedStatement.setInt(3, newUser.getWins());
-            this.preparedStatement.setInt(4, newUser.getLosses());
-            this.preparedStatement.setInt(5, newUser.getDraws());
+            this.preparedStatement.setString(1,username );
+            this.preparedStatement.setString(2, password);
+            this.preparedStatement.setInt(3,wins);
+            this.preparedStatement.setInt(4,losses);
+            this.preparedStatement.setInt(5, draws);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -112,10 +112,10 @@ public class UsersServices {
         }
     }
 
-    public boolean login(User user) {
+    public boolean login(String username,String password) {
         boolean result = false;
-        User selectedUser = getUserByName(user.getUserName());
-        if (selectedUser != null && selectedUser.getPassword().equals(user.getPassword())) {
+        User selectedUser = getUserByName(username);
+        if (selectedUser != null && selectedUser.getPassword().equals(password)) {
             updateStatus(selectedUser, true);
             result = true;
         }
