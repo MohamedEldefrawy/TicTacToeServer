@@ -5,8 +5,11 @@ import model.DTOs.LoadGameDto;
 import model.DTOs.RecordDto;
 import model.DbConnection;
 import model.Entities.Game;
+import model.Entities.User;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameServices {
 
@@ -92,6 +95,32 @@ public class GameServices {
 
 
     // Utilities
+    public List<Game> getAllGames() {
+        query = "select * from games";
+        if (connection == null)
+            connection = new DbConnection().getConnection();
+        List<Game> games = new ArrayList<>();
+        try {
+            statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            while (resultSet.next()) {
+                Game game = new Game();
+                game.setId(resultSet.getInt(1));
+                game.setPlayerOneName(resultSet.getString(2));
+                game.setPlayerTwoName(resultSet.getString(3));
+                game.setWinner(resultSet.getInt(4));
+                game.setTimeStamp(resultSet.getTimestamp(5).toLocalDateTime());
+                games.add(game);
+            }
+            statement.close();
+            resultSet.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return games;
+    }
+
     public Game getGameById(int id) {
         connection = new DbConnection().getConnection();
         Game game = new Game();

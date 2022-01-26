@@ -2,11 +2,12 @@ package services;
 
 import model.DTOs.RecordDto;
 import model.DbConnection;
+import model.Entities.Record;
+import model.Entities.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RecordsServices {
 
@@ -34,6 +35,32 @@ public class RecordsServices {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    //Utilities
+    public List<Record> getAllRecords() {
+        query = "select * from records";
+        if (connection == null)
+            connection = new DbConnection().getConnection();
+        List<Record> records = new ArrayList<>();
+        try {
+            statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            while (resultSet.next()) {
+                Record record = new Record();
+                record.setId(resultSet.getInt(1));
+                record.setSteps(resultSet.getString(2));
+                record.setRequesterName(resultSet.getString(3));
+                record.setGameId(resultSet.getInt(4));
+                records.add(record);
+            }
+            statement.close();
+            resultSet.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return records;
     }
 
     // Connection Utilities

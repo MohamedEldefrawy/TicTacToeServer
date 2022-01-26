@@ -43,9 +43,9 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="usersTable" prefHeight="250.0" prefWidth="553.0">
+                        <TableView fx:id="users_table" prefHeight="250.0" prefWidth="553.0">
                           <columns>
-                            <TableColumn fx:id="col_userName" prefWidth="95.0" text="User Name" />
+                            <TableColumn fx:id="col_username" prefWidth="95.0" text="User Name" />
                             <TableColumn fx:id="col_password" prefWidth="82.0" text="Password" />
                               <TableColumn fx:id="col_wins" prefWidth="66.0" text="Wins" />
                               <TableColumn fx:id="col_losses" prefWidth="69.0" text="Losses" />
@@ -61,13 +61,13 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView prefHeight="250.0" prefWidth="553.0">
+                        <TableView fx:id="games_table" prefHeight="250.0" prefWidth="553.0">
                            <columns>
-                              <TableColumn prefWidth="75.0" text="Game ID" />
-                              <TableColumn prefWidth="112.0" text="Player one name" />
-                              <TableColumn prefWidth="112.0" text="Player two name" />
-                              <TableColumn prefWidth="93.0" text="Winner" />
-                              <TableColumn prefWidth="158.0" text="Time" />
+                              <TableColumn fx:id="col_game_ID" prefWidth="75.0" text="Game ID" />
+                              <TableColumn fx:id="col_player_one_name" prefWidth="112.0" text="Player one name" />
+                              <TableColumn fx:id="col_player_two_name" prefWidth="112.0" text="Player two name" />
+                              <TableColumn fx:id="col_winner" prefWidth="93.0" text="Winner" />
+                              <TableColumn fx:id="col_time" prefWidth="158.0" text="Time" />
                            </columns>
                         </TableView>
                      </children>
@@ -78,12 +78,12 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView prefHeight="250.0" prefWidth="553.0">
+                        <TableView fx:id="records_table" prefHeight="250.0" prefWidth="553.0">
                            <columns>
-                              <TableColumn prefWidth="75.0" text="ID" />
-                              <TableColumn prefWidth="75.0" text="Game ID" />
-                              <TableColumn prefWidth="112.0" text="Requester name" />
-                              <TableColumn prefWidth="174.0" text="Steps" />
+                              <TableColumn fx:id="col_record_ID" prefWidth="75.0" text="ID" />
+                              <TableColumn fx:id="col_recorded_game_ID" prefWidth="75.0" text="Game ID" />
+                              <TableColumn fx:id="col_requester_name" prefWidth="112.0" text="Requester name" />
+                              <TableColumn fx:id="col_steps" prefWidth="174.0" text="Steps" />
                            </columns>
                         </TableView>
                      </children>

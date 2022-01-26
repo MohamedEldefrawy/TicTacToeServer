@@ -5,6 +5,28 @@ import java.time.LocalDateTime;
 public class Game {
     public Game() {
     }
+    private int id;
+    private String playerOneName;
+    private String playerTwoName;
+    private int winner;    //   1 , 2 ,  3     Winner
+    private LocalDateTime timeStamp;
+
+
+    public Game(int id, String playerOneName, String playerTwoName, Integer winner) {
+        this.id = id;
+        this.playerOneName = playerOneName;
+        this.playerTwoName = playerTwoName;
+        this.winner = winner;
+        this.timeStamp = LocalDateTime.now();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getPlayerOneName() {
         return playerOneName;
@@ -30,26 +52,11 @@ public class Game {
         this.winner = winner;
     }
 
-    private int id;
-    private String playerOneName;
-    private String playerTwoName;
-    private int winner;    //   1 , 2 ,  3     Winner
-    private LocalDateTime timeStamp;
-
-
-    public Game(int id, String playerOneName, String playerTwoName, Integer winner) {
-        this.id = id;
-        this.playerOneName = playerOneName;
-        this.playerTwoName = playerTwoName;
-        this.winner = winner;
-        this.timeStamp = LocalDateTime.now();
+    public LocalDateTime getTimeStamp() {
+        return timeStamp;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+    public void setTimeStamp(LocalDateTime timeStamp) {
+        this.timeStamp = timeStamp;
     }
 }
