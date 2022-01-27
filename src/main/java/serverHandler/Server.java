@@ -89,14 +89,21 @@ class ServerHandler extends Thread
             if(message== null){
                 throw  new IOException();
             }
-            JsonObject object = com.google.gson.JsonParser.parseString(message).getAsJsonObject();
+            JsonObject object = JsonParser.parseString(message).getAsJsonObject();
             String op =object.get("operation").getAsString();
             System.out.println(op);
+            JsonObject obj = new JsonObject();
             switch (op){
                 case "login" :
                      username = object.get("user").getAsString();
                      password = object.get("pass").getAsString();
                     check = us.login(username,password);
+                   // dos.writeBoolean(check);
+                    obj.addProperty("operation", check);
+                     try{
+                         dos.writeUTF(obj.toString());
+                     }catch (IOException e){e.printStackTrace(); }
+
                     break;
                 case "signUp" :
                      username = object.get("user").getAsString();
