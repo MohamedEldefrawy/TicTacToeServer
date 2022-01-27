@@ -99,7 +99,8 @@ class ServerHandler extends Thread
                      password = object.get("pass").getAsString();
                     check = us.login(username,password);
                    // dos.writeBoolean(check);
-                    obj.addProperty("operation", check);
+                    obj.addProperty("operation", "login");
+                    obj.addProperty("result" ,check);
                      try{
                          dos.writeUTF(obj.toString());
                      }catch (IOException e){e.printStackTrace(); }
