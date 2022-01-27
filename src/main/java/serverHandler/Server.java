@@ -2,14 +2,15 @@ package serverHandler;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import javafx.fxml.Initializable;
 import services.UsersServices;
 
-import java.io.*;
-import java.net.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
-import  java.sql.Connection;
-import java.sql.DriverManager;
+
 public class Server  {
     ServerSocket serversocket;
     Socket socket;
@@ -18,9 +19,10 @@ public class Server  {
 
         try {
             serversocket = new ServerSocket(5005);
-            socket=serversocket.accept();
-             new ServerHandler(socket);
-            }
+            socket = serversocket.accept();
+            System.out.println("some one connected");
+            new ServerHandler(socket);
+        }
         catch (IOException e)
         {
             e.printStackTrace();
@@ -37,7 +39,6 @@ public class Server  {
 class ServerHandler extends Thread
 {
 
-    Thread thread;
     DataOutputStream dos;
     DataInputStream dis;
     Socket ClientSocket;
@@ -103,6 +104,7 @@ class ServerHandler extends Thread
                         obj.addProperty("operation", "login");
                         obj.addProperty("result", check);
                         try {
+                            System.out.println(obj.toString());
                             dos.writeUTF(obj.toString());
                         } catch (IOException e) {
                             e.printStackTrace();

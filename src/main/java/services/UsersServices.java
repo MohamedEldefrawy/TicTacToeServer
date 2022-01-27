@@ -58,9 +58,6 @@ public class UsersServices {
 
                 users.add(user);
             }
-            statement.close();
-            resultSet.close();
-            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -92,21 +89,15 @@ public class UsersServices {
     }
 
     private void updateStatus(User user, boolean isLoggedIn) {
-        query = "update users set isLoggedIn = " + isLoggedIn + " where userName = " + "'" + user.getUserName() + "'";
+        query = "update users set isLoggedIn = "
+                + isLoggedIn + " where userName = " + "'" + user.getUserName() + "'";
 
         if (connection == null)
             connection = new DbConnection().getConnection();
 
         try {
             statement = connection.createStatement();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        try {
             statement.execute(query);
-
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
