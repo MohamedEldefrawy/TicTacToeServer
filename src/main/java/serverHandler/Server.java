@@ -51,7 +51,7 @@ class ServerHandler extends Thread
            dis = new DataInputStream(s.getInputStream());
            dos = new DataOutputStream(s.getOutputStream());
          //  ps.println("you have connected successfully");
-           thread.start();
+           start();
             }
        catch (IOException e){
            e.printStackTrace();
@@ -83,49 +83,51 @@ class ServerHandler extends Thread
     Boolean isLogged ;
     UsersServices us = new UsersServices();
     boolean check ;
-    public void run(){
-        try {
-             message = dis.readUTF();
-            if(message== null){
-                throw  new IOException();
+    public void run() {
+        while (true) {
+            try {
+                message = dis.readUTF();
+                if (message == null) {
+                    throw new IOException();
+                }
+                JsonObject object = JsonParser.parseString(message).getAsJsonObject();
+                String op = object.get("operation").getAsString();
+                System.out.println(op);
+                JsonObject obj = new JsonObject();
+                switch (op) {
+                    case "login":
+                        username = object.get("user").getAsString();
+                        password = object.get("pass").getAsString();
+                        check = us.login(username, password);
+                        // dos.writeBoolean(check);
+                        obj.addProperty("operation", "login");
+                        obj.addProperty("result", check);
+                        try {
+                            dos.writeUTF(obj.toString());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        break;
+                    case "signUp":
+                        username = object.get("user").getAsString();
+                        password = object.get("pass").getAsString();
+                        wins = 0;
+                        losses = 0;
+                        draws = 0;
+                        isLogged = true;
+                        us.createUser(username, password, wins, losses, draws);
+                    case "invitation":
+                        //  username = object.get("user").getAsString();
+                        // player2 = object.get("player2").getAsString();
+
+                }
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                close(dos, dis, ClientSocket);
             }
-            JsonObject object = JsonParser.parseString(message).getAsJsonObject();
-            String op =object.get("operation").getAsString();
-            System.out.println(op);
-            JsonObject obj = new JsonObject();
-            switch (op){
-                case "login" :
-                     username = object.get("user").getAsString();
-                     password = object.get("pass").getAsString();
-                    check = us.login(username,password);
-                   // dos.writeBoolean(check);
-                    obj.addProperty("operation", "login");
-                    obj.addProperty("result" ,check);
-                     try{
-                         dos.writeUTF(obj.toString());
-                     }catch (IOException e){e.printStackTrace(); }
-
-                    break;
-                case "signUp" :
-                     username = object.get("user").getAsString();
-                     password = object.get("pass").getAsString();
-                     wins = 0;
-                     losses =0;
-                     draws = 0;
-                     isLogged= true;
-                     us.createUser(username,password,wins,losses,draws);
-                case "invitation":
-                  //  username = object.get("user").getAsString();
-                   // player2 = object.get("player2").getAsString();
-
-            }
-
-
-
-                    } catch (IOException e) {
-            e.printStackTrace();
-            close(dos , dis , ClientSocket);
         }
     }
-
 }
