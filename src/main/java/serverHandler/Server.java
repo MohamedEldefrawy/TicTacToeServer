@@ -89,6 +89,7 @@ class ServerHandler extends Thread
         while (true) {
             try {
                 message = dis.readUTF();
+                System.out.println("message from client : " + message);
                 if (message == null) {
                     throw new IOException();
                 }
@@ -116,30 +117,28 @@ class ServerHandler extends Thread
                         break;
                     case "signUp":
                         JsonObject signUpObj = new JsonObject();
-                        signUpObj.addProperty("operation","signUp");
-                        boolean  signUpCheck ;
-                        boolean  insertCheck ;
+                        signUpObj.addProperty("operation", "signUp");
+                        boolean signUpCheck;
+                        boolean insertCheck;
                         username = object.get("user").getAsString();
                         password = object.get("pass").getAsString();
                         wins = 0;
                         losses = 0;
                         draws = 0;
-                       // isLogged = true;
-                       signUpCheck= us.checkValidation(username);
-                       if (signUpCheck) {
-                           us.createUser(username, password, wins, losses, draws);
-                          insertCheck = us.checkValidation(username);
-                          if(!insertCheck)
-                          {
-
-                              signUpObj.addProperty("result",true);
-                          }
-                       }
-                       else{
-                           signUpObj.addProperty("result",false);
-                       }
+                        // isLogged = true;
+                        signUpCheck = us.checkValidation(username);
+                        if (!signUpCheck) {
+                            boolean result = us.createUser(username, password, wins, losses, draws);
+                            us.saveChanges();
+                            if (result) {
+                                signUpObj.addProperty("result", true);
+                            }
+                        } else {
+                            signUpObj.addProperty("result", false);
+                        }
                         dos.writeUTF(signUpObj.toString());
-                       break;
+                        System.out.println("response has been sent " + signUpObj.toString());
+                        break;
                     case "invitation":
                         //  username = object.get("user").getAsString();
                         // player2 = object.get("player2").getAsString();

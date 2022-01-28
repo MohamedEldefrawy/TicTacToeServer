@@ -7,6 +7,7 @@ import model.Entities.User;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class UsersServices {
 
@@ -18,9 +19,10 @@ public class UsersServices {
 
 
     // user CRUD
-    public void createUser(String username, String password,int wins,int losses,int draws) {
+    public boolean createUser(String username, String password, int wins, int losses, int draws) {
         connection = new DbConnection().getConnection();
         query = "insert into Users (userName,password,wins,losses,draws) values (?,?,?,?,?)";
+        int rowsAffected = 0;
         Boolean result = false;
         try {
             connection.setAutoCommit(false);
@@ -29,14 +31,17 @@ public class UsersServices {
         }
         try {
             this.preparedStatement = connection.prepareStatement(query);
-            this.preparedStatement.setString(1,username );
+            this.preparedStatement.setString(1, username);
             this.preparedStatement.setString(2, password);
-            this.preparedStatement.setInt(3,wins);
-            this.preparedStatement.setInt(4,losses);
+            this.preparedStatement.setInt(3, wins);
+            this.preparedStatement.setInt(4, losses);
             this.preparedStatement.setInt(5, draws);
+            this.preparedStatement.addBatch();
+            rowsAffected = this.preparedStatement.executeBatch().length;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return rowsAffected > 0;
     }
 
     public List<User> getAllUsers() {
@@ -103,22 +108,24 @@ public class UsersServices {
             e.printStackTrace();
         }
     }
-    public boolean checkValidation (String username){
-       User user= getUserByName(username);
-       if(user==null)
-        return true;
-        else
+
+    public boolean checkValidation(String username) {
+        try {
+            User user = getUserByName(username);
+            return true;
+        } catch (NoSuchElementException ex) {
             return false;
+        }
     }
 
-    public boolean login(String username,String password) {
-        boolean result = false;
-        User selectedUser = getUserByName(username);
-        if (selectedUser != null && selectedUser.getPassword().equals(password)) {
+    public boolean login(String username, String password) {
+        try {
+            User selectedUser = getUserByName(username);
             updateStatus(selectedUser, true);
-            result = true;
+            return true;
+        } catch (NoSuchElementException ex) {
+            return false;
         }
-        return result;
     }
 
     public void logout(User user) {
@@ -130,11 +137,19 @@ public class UsersServices {
         return preparedStatement;
     }
 
-    public void closeConnection() throws SQLException {
-        connection.close();
+    public void closeConnection() {
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void saveChanges() throws SQLException {
-        connection.commit();
+    public void saveChanges() {
+        try {
+            connection.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
