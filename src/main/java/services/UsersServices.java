@@ -21,6 +21,7 @@ public class UsersServices {
     public void createUser(String username, String password,int wins,int losses,int draws) {
         connection = new DbConnection().getConnection();
         query = "insert into Users (userName,password,wins,losses,draws) values (?,?,?,?,?)";
+        Boolean result = false;
         try {
             connection.setAutoCommit(false);
         } catch (SQLException e) {
@@ -101,6 +102,13 @@ public class UsersServices {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+    public boolean checkValidation (String username){
+       User user= getUserByName(username);
+       if(user==null)
+        return true;
+        else
+            return false;
     }
 
     public boolean login(String username,String password) {

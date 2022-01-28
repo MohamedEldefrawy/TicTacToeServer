@@ -83,7 +83,8 @@ class ServerHandler extends Thread
     String player2;
     Boolean isLogged ;
     UsersServices us = new UsersServices();
-    boolean check ;
+
+
     public void run() {
         while (true) {
             try {
@@ -94,31 +95,51 @@ class ServerHandler extends Thread
                 JsonObject object = JsonParser.parseString(message).getAsJsonObject();
                 String op = object.get("operation").getAsString();
                 System.out.println(op);
-                JsonObject obj = new JsonObject();
+
                 switch (op) {
                     case "login":
+                        JsonObject loginObj = new JsonObject();
+                        boolean  loginCheck ;
                         username = object.get("user").getAsString();
                         password = object.get("pass").getAsString();
-                        check = us.login(username, password);
+                        loginCheck = us.login(username, password);
                         // dos.writeBoolean(check);
-                        obj.addProperty("operation", "login");
-                        obj.addProperty("result", check);
+                        loginObj.addProperty("operation", "login");
+                        loginObj.addProperty("result", loginCheck);
                         try {
-                            System.out.println(obj.toString());
-                            dos.writeUTF(obj.toString());
+                            System.out.println(loginObj.toString());
+                            dos.writeUTF(loginObj.toString());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
 
                         break;
                     case "signUp":
+                        JsonObject signUpObj = new JsonObject();
+                        signUpObj.addProperty("operation","signUp");
+                        boolean  signUpCheck ;
+                        boolean  insertCheck ;
                         username = object.get("user").getAsString();
                         password = object.get("pass").getAsString();
                         wins = 0;
                         losses = 0;
                         draws = 0;
-                        isLogged = true;
-                        us.createUser(username, password, wins, losses, draws);
+                       // isLogged = true;
+                       signUpCheck= us.checkValidation(username);
+                       if (signUpCheck) {
+                           us.createUser(username, password, wins, losses, draws);
+                          insertCheck = us.checkValidation(username);
+                          if(!insertCheck)
+                          {
+
+                              signUpObj.addProperty("result",true);
+                          }
+                       }
+                       else{
+                           signUpObj.addProperty("result",false);
+                       }
+                        dos.writeUTF(signUpObj.toString());
+                       break;
                     case "invitation":
                         //  username = object.get("user").getAsString();
                         // player2 = object.get("player2").getAsString();
