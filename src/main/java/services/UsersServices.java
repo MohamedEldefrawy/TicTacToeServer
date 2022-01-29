@@ -122,8 +122,12 @@ public class UsersServices {
     public boolean login(String username, String password) {
         try {
             User selectedUser = getUserByName(username);
-            updateStatus(selectedUser, true);
-            return true;
+            if (selectedUser.getPassword().equals(password)) {
+                updateStatus(selectedUser, true);
+                return true;
+            } else
+                return false;
+
         } catch (NoSuchElementException ex) {
             return false;
         }
