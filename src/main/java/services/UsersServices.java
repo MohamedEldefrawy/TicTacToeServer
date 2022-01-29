@@ -65,6 +65,7 @@ public class UsersServices {
         return users;
     }
 
+
     public User getUserByName(String userName) {
         return getAllUsers().stream().filter(user -> user.getUserName().equalsIgnoreCase(userName)).findFirst().get();
     }
@@ -89,7 +90,7 @@ public class UsersServices {
         }
     }
 
-    private void updateStatus(User user, boolean isLoggedIn) {
+    public void updateStatus(User user, boolean isLoggedIn) {
         query = "update users set isLoggedIn = "
                 + isLoggedIn + " where userName = " + "'" + user.getUserName() + "'";
 

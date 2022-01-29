@@ -2,6 +2,7 @@ package serverHandler;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import model.Entities.User;
 import services.UsersServices;
 
 import java.io.DataInputStream;
@@ -41,12 +42,12 @@ class ServerHandler extends Thread
 
     DataOutputStream dos;
     DataInputStream dis;
-    Socket ClientSocket;
+    Socket clientSocket;
 
    static ArrayList<ServerHandler> connectedClients = new ArrayList<ServerHandler>();
    public ServerHandler(Socket s){
        connectedClients.add(this);
-       ClientSocket=s;
+       clientSocket=s;
        try {
 
            dis = new DataInputStream(s.getInputStream());
@@ -142,14 +143,21 @@ class ServerHandler extends Thread
                        break;
                     case "invitation":
                         //  username = object.get("user").getAsString();
-                        // player2 = object.get("player2").getAsString();
+                        // player2 = object.get("player2").getAsString()
+                        break;
+                    case "logout" :
+                        String username = object.get("user").getAsString();
+                        us.updateStatus(us.getUserByName(username),false);
+                        close(dos,dis,clientSocket);
 
+
+                        break;
                 }
 
 
             } catch (IOException e) {
                 e.printStackTrace();
-                close(dos, dis, ClientSocket);
+                close(dos, dis, clientSocket);
             }
         }
     }
