@@ -2,7 +2,6 @@ package serverHandler;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import model.Entities.User;
 import services.UsersServices;
 
 import java.io.DataInputStream;
@@ -20,9 +19,12 @@ public class Server  {
 
         try {
             serversocket = new ServerSocket(5005);
-            socket = serversocket.accept();
-            System.out.println("some one connected");
-            new ServerHandler(socket);
+            while (true) {
+                socket = serversocket.accept();
+                System.out.println("some one connected");
+                new ServerHandler(socket);
+            }
+
         }
         catch (IOException e)
         {
@@ -59,15 +61,13 @@ class ServerHandler extends Thread
            e.printStackTrace();
 
        }
-
-
-
    }
     public  void close (DataOutputStream  dout, DataInputStream di , Socket ss){
         try {
             dout.close();
             di.close();
             ss.close();
+            this.stop();
 
         } catch (IOException e) {
             e.printStackTrace();
