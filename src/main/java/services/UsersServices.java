@@ -152,6 +152,18 @@ public class UsersServices {
         return  onlineUsers;
     }
 
+  /*  public void sendInvitation(String player1 , String player2){
+     Boolean check1= checkValidation(player1);
+     Boolean check2= checkValidation(player2);
+     if (check1 && check2){
+         User user1 = getUserByName(player1);
+         User user2= getUserByName(player2);
+
+     }
+    }
+
+   */
+
 
     public void logout(User user) {
         updateStatus(user, false);

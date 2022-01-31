@@ -48,7 +48,7 @@ class ServerHandler extends Thread
     DataOutputStream dos;
     DataInputStream dis;
     Socket clientSocket;
-
+    String serverHandlerUsername;
    static ArrayList<ServerHandler> connectedClients = new ArrayList<ServerHandler>();
    public ServerHandler(Socket s){
        connectedClients.add(this);
@@ -75,8 +75,10 @@ class ServerHandler extends Thread
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
 
+
+
+    }
     public JsonArray getOnlineObjects() {
         JsonArray jA = new JsonArray();
         List<User> onlineUsers = new ArrayList<>();
@@ -93,18 +95,44 @@ class ServerHandler extends Thread
         return jA;
     }
     public void sendToAll(JsonArray jA){
-       for ( ServerHandler serverHandler: connectedClients) {
+       for ( ServerHandler sH: connectedClients) {
            JsonObject obj = new JsonObject();
-           obj.addProperty("operation", "refreshUsers");
-           obj.add("onlineUsers", jA);
+           obj.addProperty("operation","refreshUsers");
+           obj.add("onlineUsers",jA);
            try {
-               serverHandler.dos.writeUTF(obj.toString());
+               sH.dos.writeUTF(obj.toString());
            } catch (IOException e) {
                e.printStackTrace();
            }
        }
 
 
+    }
+    public ServerHandler getHandlerByUsername(String player2){
+       for (ServerHandler sH :connectedClients){
+           if (player2.equalsIgnoreCase(serverHandlerUsername))
+               return sH;
+           else
+               continue;
+
+
+       }
+
+      return null;
+    }
+
+    public void sendInvitation(String player1 , ServerHandler player2){
+       if(player2 !=null) {
+           JsonObject inv = new JsonObject();
+           inv.addProperty("operation ", "gameRequest");
+           inv.addProperty("playerReqName", player1);
+
+           try {
+               player2.dos.writeUTF(inv.toString());
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
+       }
     }
 
 
@@ -138,6 +166,7 @@ class ServerHandler extends Thread
                         JsonArray onlineObjs = new JsonArray();
                         boolean  loginCheck ;
                         username = object.get("user").getAsString();
+                        serverHandlerUsername=object.get("user").getAsString();
                         password = object.get("pass").getAsString();
                         loginCheck = us.login(username, password);
                         // dos.writeBoolean(check);
@@ -186,8 +215,9 @@ class ServerHandler extends Thread
                         System.out.println("response has been sent " + signUpObj.toString());
                         break;
                     case "invitation":
-                        //  username = object.get("user").getAsString();
-                        // player2 = object.get("player2").getAsString()
+                         username = object.get("user").getAsString();
+                         player2 = object.get("player2").getAsString();
+
                         break;
                     case "logout" :
                         String username = object.get("user").getAsString();
