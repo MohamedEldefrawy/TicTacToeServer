@@ -3,6 +3,7 @@ package serverHandler;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import model.Entities.User;
 import services.UsersServices;
 
 import java.io.DataInputStream;
@@ -74,25 +75,28 @@ class ServerHandler extends Thread
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-
     }
+
     public JsonArray getOnlineObjects() {
         JsonArray jA = new JsonArray();
-        List onlineUsers = new ArrayList<Object>();
-        onlineUsers  = us.getAllOnlineUsers();
-        for (Object o : onlineUsers ){
-
-            jA.add(o.toString());
+        List<User> onlineUsers = new ArrayList<>();
+        onlineUsers = us.getAllOnlineUsers();
+        for (User o : onlineUsers) {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("userName", o.getUserName());
+            jsonObject.addProperty("wins", o.getWins());
+            jsonObject.addProperty("losses", o.getLosses());
+            jsonObject.addProperty("draws", o.getDraws());
+            jsonObject.addProperty("status", o.getStatus());
+            jA.add(jsonObject);
         }
         return jA;
     }
     public void sendToAll(JsonArray jA){
        for ( ServerHandler serverHandler: connectedClients) {
            JsonObject obj = new JsonObject();
-           obj.addProperty("operation","refreshUsers");
-           obj.add("onlineUsers",jA);
+           obj.addProperty("operation", "refreshUsers");
+           obj.add("onlineUsers", jA);
            try {
                serverHandler.dos.writeUTF(obj.toString());
            } catch (IOException e) {
