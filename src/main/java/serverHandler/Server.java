@@ -88,6 +88,20 @@ class ServerHandler extends Thread
         }
         return jA;
     }
+    public void sendToAll(JsonArray jA){
+       for ( ServerHandler sH: connectedClients) {
+           JsonObject obj = new JsonObject();
+           obj.addProperty("operation","refreshUsers");
+           obj.add("onlineUsers",jA);
+           try {
+               dos.writeUTF(obj.toString());
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
+       }
+
+
+    }
 
 
 
@@ -125,17 +139,18 @@ class ServerHandler extends Thread
                         // dos.writeBoolean(check);
                         loginObj.addProperty("operation", "login");
                         loginObj.addProperty("result", loginCheck);
+                        try {
+                            System.out.println(loginObj.toString());
+                            dos.writeUTF(loginObj.toString());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
 
 
                         if(loginCheck){
                             onlineObjs=getOnlineObjects();
-                            loginObj.add("onlineUsers",onlineObjs);
-                            try {
-                                System.out.println(loginObj.toString());
-                                dos.writeUTF(loginObj.toString());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            //loginObj.add("onlineUsers",onlineObjs);
+                            sendToAll(onlineObjs);
                             System.out.println(onlineObjs.toString());
                         }
 
@@ -177,10 +192,11 @@ class ServerHandler extends Thread
                         close(dos,dis,clientSocket);
                         JsonArray online = new JsonArray();
                         online = getOnlineObjects();
-                        JsonObject obj = new JsonObject();
-                        obj.addProperty("operation","refreshUsers");
-                        obj.add("onlineUsers",online);
-                        dos.writeUTF(obj.toString());
+                        //JsonObject obj = new JsonObject();
+                       // obj.addProperty("operation","refreshUsers");
+                       // obj.add("onlineUsers",online);
+                        //dos.writeUTF(obj.toString());
+                        sendToAll(online);
                         System.out.println(online.toString());
 
 
