@@ -180,6 +180,7 @@ class ServerHandler extends Thread
                         JsonObject obj = new JsonObject();
                         obj.addProperty("operation","refreshUsers");
                         obj.add("onlineUsers",online);
+                        dos.writeUTF(obj.toString());
                         System.out.println(online.toString());
 
 
