@@ -89,12 +89,12 @@ class ServerHandler extends Thread
         return jA;
     }
     public void sendToAll(JsonArray jA){
-       for ( ServerHandler sH: connectedClients) {
+       for ( ServerHandler serverHandler: connectedClients) {
            JsonObject obj = new JsonObject();
            obj.addProperty("operation","refreshUsers");
            obj.add("onlineUsers",jA);
            try {
-               dos.writeUTF(obj.toString());
+               serverHandler.dos.writeUTF(obj.toString());
            } catch (IOException e) {
                e.printStackTrace();
            }
