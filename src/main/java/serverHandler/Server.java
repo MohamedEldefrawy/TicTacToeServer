@@ -178,6 +178,7 @@ class ServerHandler extends Thread
                         JsonObject obj = new JsonObject();
                         obj.addProperty("operation","refreshUsers");
                         obj.add("onlineUsers",online);
+                        System.out.println(online.toString());
 
 
                         break;
