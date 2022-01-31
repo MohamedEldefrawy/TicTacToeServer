@@ -125,15 +125,17 @@ class ServerHandler extends Thread
                         // dos.writeBoolean(check);
                         loginObj.addProperty("operation", "login");
                         loginObj.addProperty("result", loginCheck);
-                        loginObj.add("onlineUsers",onlineObjs);
-                        try {
-                            System.out.println(loginObj.toString());
-                            dos.writeUTF(loginObj.toString());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+
+
                         if(loginCheck){
                             onlineObjs=getOnlineObjects();
+                            loginObj.add("onlineUsers",onlineObjs);
+                            try {
+                                System.out.println(loginObj.toString());
+                                dos.writeUTF(loginObj.toString());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                             System.out.println(onlineObjs.toString());
                         }
 
