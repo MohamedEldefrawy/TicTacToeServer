@@ -133,6 +133,26 @@ public class UsersServices {
         }
     }
 
+    public List getAllOnlineUsers (){
+        List <User> onlineUsers = new ArrayList<User>();
+        String query = "select * from Users where isLoggedIn = true";
+        if (connection == null)
+            connection = new DbConnection().getConnection();
+        try {
+            statement = connection.createStatement();
+            ResultSet var =this.statement.executeQuery(query);
+            while(var.next()){
+                User user = new User(var.getString(1), var.getString(2),var.getInt(3),var.getInt(4),var.getInt(5));
+             onlineUsers.add(user);
+
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return  onlineUsers;
+    }
+
+
     public void logout(User user) {
         updateStatus(user, false);
     }

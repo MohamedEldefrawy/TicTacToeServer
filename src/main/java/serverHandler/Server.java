@@ -1,5 +1,6 @@
 package serverHandler;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import services.UsersServices;
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Server  {
     ServerSocket serversocket;
@@ -101,6 +103,7 @@ class ServerHandler extends Thread
                 switch (op) {
                     case "login":
                         JsonObject loginObj = new JsonObject();
+                        JsonArray onlineObjs = new JsonArray();
                         boolean  loginCheck ;
                         username = object.get("user").getAsString();
                         password = object.get("pass").getAsString();
@@ -114,6 +117,17 @@ class ServerHandler extends Thread
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        if(loginCheck){
+                            List onlineUsers = new ArrayList<Object>();
+                          onlineUsers  = us.getAllOnlineUsers();
+                         for (Object o : onlineUsers ){
+
+                              onlineObjs.add(o.toString());
+                          }
+                         dos.writeUTF(onlineObjs.toString());
+                        }
+
+
 
                         break;
                     case "signUp":
