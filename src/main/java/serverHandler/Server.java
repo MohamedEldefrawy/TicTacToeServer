@@ -3,6 +3,7 @@ package serverHandler;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import model.Entities.User;
 import services.UsersServices;
 
 import java.io.DataInputStream;
@@ -104,30 +105,31 @@ class ServerHandler extends Thread
                     case "login":
                         JsonObject loginObj = new JsonObject();
                         JsonArray onlineObjs = new JsonArray();
-                        boolean  loginCheck ;
+                        boolean loginCheck;
                         username = object.get("user").getAsString();
                         password = object.get("pass").getAsString();
                         loginCheck = us.login(username, password);
                         // dos.writeBoolean(check);
                         loginObj.addProperty("operation", "login");
                         loginObj.addProperty("result", loginCheck);
-                        loginObj.add("onlineUSers",onlineObjs);
+                        loginObj.add("onlineUsers", onlineObjs);
+
+                        if (loginCheck) {
+                            List<User> onlineUsers = new ArrayList<>();
+                            onlineUsers = us.getAllOnlineUsers();
+                            for (User o : onlineUsers) {
+
+                                onlineObjs.add(o.toString());
+                            }
+                            System.out.println(onlineObjs.toString());
+                        }
+
                         try {
                             System.out.println(loginObj.toString());
                             dos.writeUTF(loginObj.toString());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        if(loginCheck){
-                            List onlineUsers = new ArrayList<Object>();
-                          onlineUsers  = us.getAllOnlineUsers();
-                         for (Object o : onlineUsers ){
-
-                              onlineObjs.add(o.toString());
-                          }
-                         onlineObjs.toString();
-                        }
-
 
 
                         break;

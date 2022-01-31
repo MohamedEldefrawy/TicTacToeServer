@@ -133,7 +133,7 @@ public class UsersServices {
         }
     }
 
-    public List getAllOnlineUsers (){
+    public List<User> getAllOnlineUsers (){
         List <User> onlineUsers = new ArrayList<User>();
         String query = "select * from Users where isLoggedIn = true";
         if (connection == null)
