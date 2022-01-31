@@ -76,7 +76,21 @@ class ServerHandler extends Thread
         }
 
 
+
     }
+    public JsonArray getOnlineObjects() {
+        JsonArray jA = new JsonArray();
+        List onlineUsers = new ArrayList<Object>();
+        onlineUsers  = us.getAllOnlineUsers();
+        for (Object o : onlineUsers ){
+
+            jA.add(o.toString());
+        }
+        return jA;
+    }
+
+
+
     String username;
     String password;
     String message;
@@ -111,7 +125,7 @@ class ServerHandler extends Thread
                         // dos.writeBoolean(check);
                         loginObj.addProperty("operation", "login");
                         loginObj.addProperty("result", loginCheck);
-                        loginObj.add("onlineUSers",onlineObjs);
+                        loginObj.add("onlineUsers",onlineObjs);
                         try {
                             System.out.println(loginObj.toString());
                             dos.writeUTF(loginObj.toString());
@@ -119,13 +133,8 @@ class ServerHandler extends Thread
                             e.printStackTrace();
                         }
                         if(loginCheck){
-                            List onlineUsers = new ArrayList<Object>();
-                          onlineUsers  = us.getAllOnlineUsers();
-                         for (Object o : onlineUsers ){
-
-                              onlineObjs.add(o.toString());
-                          }
-                         onlineObjs.toString();
+                            onlineObjs=getOnlineObjects();
+                            System.out.println(onlineObjs.toString());
                         }
 
 
@@ -162,7 +171,13 @@ class ServerHandler extends Thread
                     case "logout" :
                         String username = object.get("user").getAsString();
                         us.updateStatus(us.getUserByName(username),false);
+
                         close(dos,dis,clientSocket);
+                        JsonArray online = new JsonArray();
+                        online = getOnlineObjects();
+                        JsonObject obj = new JsonObject();
+                        obj.addProperty("operation","refreshUsers");
+                        obj.add("onlineUsers",online);
 
 
                         break;
