@@ -182,17 +182,25 @@ class ServerHandler extends Thread
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        if(loginCheck){
-                            onlineObjs=getOnlineObjects();
+                        if (loginCheck) {
+                            onlineObjs = getOnlineObjects();
                             sendToAll(onlineObjs);
                             System.out.println(onlineObjs.toString());
                         }
                         break;
+                    case "logout":
+                        String username = object.get("user").getAsString();
+                        us.logout(us.getUserByName(username));
 
-
+                        JsonArray online = new JsonArray();
+                        online = getOnlineObjects();
+                        sendToAll(online);
+                        System.out.println(online.toString());
+                        close(dos, dis, clientSocket);
+                        break;
 
                     case "signUp":
-                        String passwrd,signUpUsername;
+                        String passwrd, signUpUsername;
                         JsonObject signUpObj = new JsonObject();
                         signUpObj.addProperty("operation", "signUp");
                         boolean signUpCheck;
@@ -230,21 +238,6 @@ class ServerHandler extends Thread
                         }
                         else  obj.addProperty("answer","false");
                         dos.writeUTF(obj.toString());
-                        break;
-
-                    case "logout" :
-                        String username = object.get("user").getAsString();
-                        us.updateStatus(us.getUserByName(username),false);
-
-                        close(dos,dis,clientSocket);
-                        JsonArray online = new JsonArray();
-                        online = getOnlineObjects();
-                        //JsonObject obj = new JsonObject();
-                       // obj.addProperty("operation","refreshUsers");
-                       // obj.add("onlineUsers",online);
-                        //dos.writeUTF(obj.toString());
-                        sendToAll(online);
-                        System.out.println(online.toString());
                         break;
                 }
 
