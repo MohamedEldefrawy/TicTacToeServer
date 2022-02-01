@@ -101,7 +101,12 @@ class ServerHandler extends Thread
            obj.addProperty("operation","refreshUsers");
            obj.add("onlineUsers",jA);
            try {
-               sH.dos.writeUTF(obj.toString());
+               if (sH.clientSocket.isConnected())
+                   sH.dos.writeUTF(obj.toString());
+               else {
+                   sH.dos.close();
+                   sH.dos.close();
+               }
            } catch (IOException e) {
                e.printStackTrace();
            }
