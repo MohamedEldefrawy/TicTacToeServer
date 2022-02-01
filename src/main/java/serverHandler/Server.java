@@ -96,32 +96,28 @@ class ServerHandler extends Thread
         return jA;
     }
     public void sendToAll(JsonArray jA){
-       for ( ServerHandler sH: connectedClients) {
-           JsonObject obj = new JsonObject();
-           obj.addProperty("operation","refreshUsers");
-           obj.add("onlineUsers",jA);
-           try {
-               if (sH.clientSocket.isConnected())
-                   sH.dos.writeUTF(obj.toString());
-               else {
-                   sH.dos.close();
-                   sH.dos.close();
-               }
-           } catch (IOException e) {
-               e.printStackTrace();
-           }
-       }
-
-
+        if (connectedClients.size() > 0) {
+            for (ServerHandler sH : connectedClients) {
+                JsonObject obj = new JsonObject();
+                obj.addProperty("operation", "refreshUsers");
+                obj.add("onlineUsers", jA);
+                try {
+                    if (sH.clientSocket.isConnected())
+                        sH.dos.writeUTF(obj.toString());
+                    else {
+                        sH.dos.close();
+                        sH.dos.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
     public ServerHandler getHandlerByUsername(String player2){
        for (ServerHandler sH :connectedClients){
            if (player2.equalsIgnoreCase(serverHandlerUsername))
                return sH;
-           else
-               continue;
-
-
        }
 
       return null;
@@ -194,7 +190,8 @@ class ServerHandler extends Thread
 
                         JsonArray online = new JsonArray();
                         online = getOnlineObjects();
-                        sendToAll(online);
+                        if (online.size() > 0)
+                            sendToAll(online);
                         System.out.println(online.toString());
                         close(dos, dis, clientSocket);
                         break;
