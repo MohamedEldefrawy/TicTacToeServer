@@ -21,7 +21,7 @@ public class GameServices {
     private RecordsServices recordsServices;
 
     // user CRUD
-    public void startGame(GameDto gameDto) {
+    public int startGame(String player1 , String player2) {
         if (connection == null)
             connection = new DbConnection().getConnection();
 
@@ -35,14 +35,29 @@ public class GameServices {
 
         try {
             this.preparedStatement = connection.prepareStatement(query);
-            this.preparedStatement.setString(1, gameDto.getPlayerOneName());
-            this.preparedStatement.setString(2, gameDto.getPlayerTwoName());
+            this.preparedStatement.setString(1, player1);
+            this.preparedStatement.setString(2, player2);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
+        return getGamesId();
     }
+    public int getGamesId() {
 
+        if (connection == null)
+            connection = new DbConnection().getConnection();
+        String query = "select SELECT LAST_INSERT_ID();";
+        if (connection == null)
+            connection = new DbConnection().getConnection();
+        try {
+            statement = connection.createStatement();
+            ResultSet var = this.statement.executeQuery(query);
+            return var.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
     public void endGame(GameDto gameDto) {
         int gameId = getGameId();
         Game currentGame = getGameById(gameId);

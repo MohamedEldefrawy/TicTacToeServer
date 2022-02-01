@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import model.Entities.User;
+import services.GameServices;
 import services.UsersServices;
 
 import java.io.DataInputStream;
@@ -137,15 +138,13 @@ class ServerHandler extends Thread
 
 
 
-    String username;
-    String password;
+    String player1;
     String message;
-    int  wins;
-    int losses;
-    int draws;
+
     String player2;
-    Boolean isLogged ;
+
     UsersServices us = new UsersServices();
+    GameServices gs= new GameServices();
 
 
     public void run() {
@@ -162,14 +161,14 @@ class ServerHandler extends Thread
 
                 switch (op) {
                     case "login":
+                        String password, loginUsername;
                         JsonObject loginObj = new JsonObject();
                         JsonArray onlineObjs = new JsonArray();
                         boolean  loginCheck ;
-                        username = object.get("user").getAsString();
+                        loginUsername = object.get("user").getAsString();
                         serverHandlerUsername=object.get("user").getAsString();
                         password = object.get("pass").getAsString();
-                        loginCheck = us.login(username, password);
-                        // dos.writeBoolean(check);
+                        loginCheck = us.login(loginUsername, password);
                         loginObj.addProperty("operation", "login");
                         loginObj.addProperty("result", loginCheck);
                         try {
@@ -178,32 +177,25 @@ class ServerHandler extends Thread
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-
-
                         if(loginCheck){
                             onlineObjs=getOnlineObjects();
-                            //loginObj.add("onlineUsers",onlineObjs);
                             sendToAll(onlineObjs);
                             System.out.println(onlineObjs.toString());
                         }
-
-
-
                         break;
+
+
+
                     case "signUp":
+                        String passwrd,signUpUsername;
                         JsonObject signUpObj = new JsonObject();
                         signUpObj.addProperty("operation", "signUp");
                         boolean signUpCheck;
-                        boolean insertCheck;
-                        username = object.get("user").getAsString();
-                        password = object.get("pass").getAsString();
-                        wins = 0;
-                        losses = 0;
-                        draws = 0;
-                        // isLogged = true;
-                        signUpCheck = us.checkValidation(username);
+                        signUpUsername = object.get("user").getAsString();
+                        passwrd = object.get("pass").getAsString();
+                        signUpCheck = us.checkValidation(signUpUsername);
                         if (!signUpCheck) {
-                            boolean result = us.createUser(username, password, wins, losses, draws);
+                            boolean result = us.createUser(signUpUsername, passwrd, 0, 0, 0);
                             us.saveChanges();
                             if (result) {
                                 signUpObj.addProperty("result", true);
@@ -214,11 +206,21 @@ class ServerHandler extends Thread
                         dos.writeUTF(signUpObj.toString());
                         System.out.println("response has been sent " + signUpObj.toString());
                         break;
+
+
                     case "invitation":
-                         username = object.get("user").getAsString();
+                         player1 = object.get("user").getAsString();
                          player2 = object.get("player2").getAsString();
 
                         break;
+                    case "invResponse" :
+                        int gameId;
+                        String response = object.get("answer").getAsString();
+                        if(response.equals("true")){
+                          gameId=  gs.startGame(player1,player2);
+                        }
+                        break;
+
                     case "logout" :
                         String username = object.get("user").getAsString();
                         us.updateStatus(us.getUserByName(username),false);
@@ -232,8 +234,6 @@ class ServerHandler extends Thread
                         //dos.writeUTF(obj.toString());
                         sendToAll(online);
                         System.out.println(online.toString());
-
-
                         break;
                 }
 
