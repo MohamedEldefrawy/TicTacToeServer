@@ -216,9 +216,15 @@ class ServerHandler extends Thread
                     case "invResponse" :
                         int gameId;
                         String response = object.get("answer").getAsString();
+                        JsonObject obj = new JsonObject();
+                        obj.addProperty("operation","player2Respnse");
+
                         if(response.equals("true")){
                           gameId=  gs.startGame(player1,player2);
+                          obj.addProperty("answer","true");
                         }
+                        else  obj.addProperty("answer","false");
+                        dos.writeUTF(obj.toString());
                         break;
 
                     case "logout" :
