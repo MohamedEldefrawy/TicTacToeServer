@@ -219,17 +219,19 @@ class ServerHandler extends Thread
 
 
                     case "invitation":
-                         player1 = object.get("user").getAsString();
-                         player2 = object.get("player2").getAsString();
-
+                        player1 = object.get("user").getAsString();
+                        player2 = object.get("player2").getAsString();
+                        JsonObject deliverInvitationObj = new JsonObject();
+                        deliverInvitationObj.addProperty("operation", "deliveredInvitation");
+                        deliverInvitationObj.addProperty("opponentName", player2);
                         break;
-                    case "invResponse" :
+                    case "invResponse":
                         int gameId;
                         String response = object.get("answer").getAsString();
                         JsonObject obj = new JsonObject();
-                        obj.addProperty("operation","player2Respnse");
+                        obj.addProperty("operation", "player2Respnse");
 
-                        if(response.equals("true")){
+                        if (response.equals("true")) {
                           gameId=  gs.startGame(player1,player2);
                           obj.addProperty("answer","true");
                         }
