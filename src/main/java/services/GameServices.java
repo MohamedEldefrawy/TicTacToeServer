@@ -5,7 +5,6 @@ import model.DTOs.LoadGameDto;
 import model.DTOs.RecordDto;
 import model.DbConnection;
 import model.Entities.Game;
-import model.Entities.User;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -37,6 +36,10 @@ public class GameServices {
             this.preparedStatement = connection.prepareStatement(query);
             this.preparedStatement.setString(1, player1);
             this.preparedStatement.setString(2, player2);
+            this.preparedStatement.addBatch();
+            this.preparedStatement.executeBatch();
+
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -46,17 +49,22 @@ public class GameServices {
 
         if (connection == null)
             connection = new DbConnection().getConnection();
-        String query = "select SELECT LAST_INSERT_ID();";
-        if (connection == null)
-            connection = new DbConnection().getConnection();
+
+        String query = "select LAST_INSERT_ID();";
+
         try {
             statement = connection.createStatement();
-            ResultSet var = this.statement.executeQuery(query);
-            return var.getInt(1);
+            ResultSet resultSet = this.statement.executeQuery(query);
+
+            if (resultSet.next()) {
+                int id = resultSet.getInt(1);
+                System.out.println("gameID = " + id);
+                return id;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return 0;
+        return -1;
     }
     public void endGame(GameDto gameDto) {
         int gameId = getGameId();
@@ -199,11 +207,16 @@ public class GameServices {
     public PreparedStatement getPreparedStatement() {
         return preparedStatement;
     }
+
     public void closeConnection() throws SQLException {
         connection.close();
     }
 
-    public void saveChanges() throws SQLException {
-        connection.commit();
+    public void saveChanges() {
+        try {
+            connection.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

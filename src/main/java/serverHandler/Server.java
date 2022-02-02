@@ -96,7 +96,7 @@ class ServerHandler extends Thread
         return jA;
     }
     public void sendToAll(JsonArray jA){
-        if (connectedClients.size() > 0) {
+        if (connectedClients.size() > 1) {
             for (ServerHandler sH : connectedClients) {
                 JsonObject obj = new JsonObject();
                 obj.addProperty("operation", "refreshUsers");
@@ -232,10 +232,15 @@ class ServerHandler extends Thread
                         obj.addProperty("operation", "player2Response");
 
                         if (response.equals("true")) {
-                          gameId =  gs.startGame(player1,player2);
-                          obj.addProperty("answer","true");
+                            gameId = gs.startGame(player1, player2);
+                            gs.saveChanges();
+                            obj.addProperty("answer", "true");
+                            obj.addProperty("gameId", gameId);
+                        } else {
+                            obj.addProperty("answer", "false");
+                            obj.addProperty("gameId", -1);
                         }
-                        else  obj.addProperty("answer","false");
+
                         dos.writeUTF(obj.toString());
                         break;
                 }
