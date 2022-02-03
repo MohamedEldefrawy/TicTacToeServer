@@ -51,6 +51,7 @@ class ServerHandler extends Thread
     Socket clientSocket;
     String serverHandlerUsername;
    static ArrayList<ServerHandler> connectedClients = new ArrayList<ServerHandler>();
+    List<ServerHandler> inGameHandlers = new ArrayList<>();
    public ServerHandler(Socket s){
        connectedClients.add(this);
        clientSocket=s;
@@ -107,7 +108,8 @@ class ServerHandler extends Thread
                         sH.dos.writeUTF(obj.toString());
                     else {
                         sH.dos.close();
-                        sH.dos.close();
+
+                        sH.dis.close();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -118,12 +120,12 @@ class ServerHandler extends Thread
 
     public void sendCreatedGameToBothPlayer(String player1, String player2, int gameId) {
         if (connectedClients.size() != 0) {
-            List<ServerHandler> handlers = new ArrayList<>();
-            handlers.add(getHandlerByUsername(player1));
-            handlers.add(getHandlerByUsername(player2));
+
+            inGameHandlers.add(getHandlerByUsername(player1));
+            inGameHandlers.add(getHandlerByUsername(player2));
             connectedClients.forEach(serverHandler -> System.out.println("server Handlers online = " + serverHandler.serverHandlerUsername));
-            handlers.forEach(serverHandler -> System.out.println(serverHandler.serverHandlerUsername));
-            for (ServerHandler handler : handlers) {
+            inGameHandlers.forEach(serverHandler -> System.out.println(serverHandler.serverHandlerUsername));
+            for (ServerHandler handler : inGameHandlers) {
                 JsonObject createdGameObject = new JsonObject();
                 createdGameObject.addProperty("operation", "getCreatedGame");
                 createdGameObject.addProperty("gameId", gameId);
@@ -151,8 +153,8 @@ class ServerHandler extends Thread
     public void sendInvitation(String player1, ServerHandler player2) {
         if (player2 != null) {
             JsonObject inv = new JsonObject();
-            inv.addProperty("operation ", "gameRequest");
-            inv.addProperty("playerReqName", player1);
+            inv.addProperty("operation ", "receiveInvitation");
+            inv.addProperty("opponentName", player1);
 
             try {
                 player2.dos.writeUTF(inv.toString());
@@ -160,6 +162,27 @@ class ServerHandler extends Thread
                 e.printStackTrace();
             }
         }
+    }
+
+    public void sendPlayerMove (String player , String move){
+       JsonObject playerMoveObj = new JsonObject();
+       playerMoveObj.addProperty("PlayerName",player);
+       playerMoveObj.addProperty("move",move);
+       if(player.equalsIgnoreCase(inGameHandlers.get(0).serverHandlerUsername)){
+           try {
+               inGameHandlers.get(1).dos.writeUTF(playerMoveObj.toString());
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
+       }
+       else{
+           try {
+               inGameHandlers.get(0).dos.writeUTF(playerMoveObj.toString());
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
+       }
+
     }
 
 
@@ -245,10 +268,12 @@ class ServerHandler extends Thread
                     case "invitation":
                         player1 = object.get("user").getAsString();
                         player2 = object.get("player2").getAsString();
-                        JsonObject deliverInvitationObj = new JsonObject();
-                        deliverInvitationObj.addProperty("operation", "receiveInvitation");
-                        deliverInvitationObj.addProperty("opponentName", player1);
-                        dos.writeUTF(deliverInvitationObj.toString());
+                       //JsonObject deliverInvitationObj = new JsonObject();
+                       // deliverInvitationObj.addProperty("operation", "receiveInvitation");
+                        //deliverInvitationObj.addProperty("opponentName", player1);
+                        //dos.writeUTF(deliverInvitationObj.toString());
+                       ServerHandler ser= getHandlerByUsername(player2);
+                       sendInvitation(player1 , ser);
                         break;
                     case "invResponse":
                         int gameId;
@@ -269,6 +294,11 @@ class ServerHandler extends Thread
                         dos.writeUTF(obj.toString());
                         dos.writeUTF(gameIdObj.toString());
                         break;
+                    case "game" :
+                        String player , move;
+                        player =object.get("playerMove").getAsString();
+                        move =  object.get("move").getAsString();
+                         sendPlayerMove(player,move);
                 }
 
 
