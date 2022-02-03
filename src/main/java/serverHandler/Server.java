@@ -143,7 +143,7 @@ class ServerHandler extends Thread
 
     public ServerHandler getHandlerByUsername(String player2) {
         for (ServerHandler sH : connectedClients) {
-            if (player2.equalsIgnoreCase(sH.serverHandlerUsername))
+            if (player2.equals(sH.serverHandlerUsername))
                 return sH;
         }
 
@@ -153,7 +153,7 @@ class ServerHandler extends Thread
     public void sendInvitation(String player1, ServerHandler player2) {
         if (player2 != null) {
             JsonObject inv = new JsonObject();
-            inv.addProperty("operation ", "receiveInvitation");
+            inv.addProperty("operation", "receiveInvitation");
             inv.addProperty("opponentName", player1);
 
             try {
