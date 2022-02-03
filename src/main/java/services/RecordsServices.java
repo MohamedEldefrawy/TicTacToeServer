@@ -18,7 +18,7 @@ public class RecordsServices {
     private String query;
 
     // CRUD
-    public void createRecord(RecordDto recordDto) {
+    public void createRecord(String moves,String player1,int gameId) {
         connection = new DbConnection().getConnection();
         query = "insert into records (steps,requesterName,gameId) values (?,?,?)";
 
@@ -29,9 +29,9 @@ public class RecordsServices {
         }
         try {
             this.preparedStatement = connection.prepareStatement(query);
-            this.preparedStatement.setString(1, recordDto.getSteps());
-            this.preparedStatement.setString(2, recordDto.getRequesterName());
-            this.preparedStatement.setInt(3, recordDto.getGameId());
+            this.preparedStatement.setString(1, moves);
+            this.preparedStatement.setString(2, player1);
+            this.preparedStatement.setInt(3, gameId);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -62,6 +62,12 @@ public class RecordsServices {
         }
         return records;
     }
+
+
+
+
+
+
 
     // Connection Utilities
     public PreparedStatement getPreparedStatement() {
