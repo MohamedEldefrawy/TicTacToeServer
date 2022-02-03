@@ -25,7 +25,6 @@ public class UsersServices {
         int rowsAffected = 0;
         Boolean result = false;
         try {
-            connection.setAutoCommit(false);
             this.preparedStatement = connection.prepareStatement(query);
             this.preparedStatement.setString(1, username);
             this.preparedStatement.setString(2, password);
@@ -79,11 +78,6 @@ public class UsersServices {
 
         query = "update Users set wins = ? , losses = ? , draws = ?  where userName = ?";
         try {
-            connection.setAutoCommit(false);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        try {
             this.preparedStatement = connection.prepareStatement(query);
             this.preparedStatement.setInt(1, user.getWins());
             this.preparedStatement.setInt(2, user.getLosses());
@@ -101,7 +95,6 @@ public class UsersServices {
             connection = new DbConnection().getConnection();
 
         try {
-            connection.setAutoCommit(false);
             statement = connection.createStatement();
             statement.execute(query);
         } catch (SQLException e) {
@@ -183,6 +176,7 @@ public class UsersServices {
 
     public void saveChanges() {
         try {
+            connection.setAutoCommit(false);
             connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();

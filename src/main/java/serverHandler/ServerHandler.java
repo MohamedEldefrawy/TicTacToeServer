@@ -163,11 +163,11 @@ public class ServerHandler extends Thread {
     public void run() {
         while (true) {
             try {
-                message = dis.readUTF();
-                System.out.println("message from client : " + message);
-                if (message == null) {
-                    throw new IOException();
+                if (dis != null) {
+                    message = dis.readUTF();
+                    System.out.println("message from client : " + message);
                 }
+
                 JsonObject object = JsonParser.parseString(message).getAsJsonObject();
                 String op = object.get("operation").getAsString();
                 System.out.println(op);
