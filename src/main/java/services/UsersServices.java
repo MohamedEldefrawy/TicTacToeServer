@@ -26,10 +26,6 @@ public class UsersServices {
         Boolean result = false;
         try {
             connection.setAutoCommit(false);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        try {
             this.preparedStatement = connection.prepareStatement(query);
             this.preparedStatement.setString(1, username);
             this.preparedStatement.setString(2, password);
@@ -41,6 +37,7 @@ public class UsersServices {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return rowsAffected > 0;
     }
 
@@ -100,11 +97,11 @@ public class UsersServices {
     public void updateStatus(User user, boolean isLoggedIn) {
         query = "update users set isLoggedIn = "
                 + isLoggedIn + " where userName = " + "'" + user.getUserName() + "'";
-
         if (connection == null)
             connection = new DbConnection().getConnection();
 
         try {
+            connection.setAutoCommit(false);
             statement = connection.createStatement();
             statement.execute(query);
         } catch (SQLException e) {
@@ -124,7 +121,7 @@ public class UsersServices {
     public boolean login(String username, String password) {
         try {
             User selectedUser = getUserByName(username);
-            if (selectedUser.getPassword().equals(password)) {
+            if (selectedUser != null && selectedUser.getPassword().equals(password)) {
                 updateStatus(selectedUser, true);
                 return true;
             } else
