@@ -115,27 +115,51 @@ class ServerHandler extends Thread
             }
         }
     }
-    public ServerHandler getHandlerByUsername(String player2){
-       for (ServerHandler sH :connectedClients){
-           if (player2.equalsIgnoreCase(serverHandlerUsername))
-               return sH;
-       }
 
-      return null;
+    public void sendCreatedGameToBothPlayer(String player1, String player2, int gameId) {
+        if (connectedClients.size() != 0) {
+            List<ServerHandler> handlers = new ArrayList<>();
+            handlers.add(getHandlerByUsername(player1));
+            handlers.add(getHandlerByUsername(player2));
+            connectedClients.forEach(serverHandler -> System.out.println("server Handlers online = " + serverHandler.serverHandlerUsername));
+            handlers.forEach(serverHandler -> System.out.println(serverHandler.serverHandlerUsername));
+            for (ServerHandler handler : handlers) {
+                JsonObject createdGameObject = new JsonObject();
+                createdGameObject.addProperty("operation", "getCreatedGame");
+                createdGameObject.addProperty("gameId", gameId);
+                createdGameObject.addProperty("playerX", player1);
+                createdGameObject.addProperty("playerY", player2);
+                try {
+                    if (handler != null)
+                        handler.dos.writeUTF(createdGameObject.toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
-    public void sendInvitation(String player1 , ServerHandler player2){
-       if(player2 !=null) {
-           JsonObject inv = new JsonObject();
-           inv.addProperty("operation ", "gameRequest");
-           inv.addProperty("playerReqName", player1);
+    public ServerHandler getHandlerByUsername(String player2) {
+        for (ServerHandler sH : connectedClients) {
+            if (player2.equalsIgnoreCase(sH.serverHandlerUsername))
+                return sH;
+        }
 
-           try {
-               player2.dos.writeUTF(inv.toString());
-           } catch (IOException e) {
-               e.printStackTrace();
-           }
-       }
+        return null;
+    }
+
+    public void sendInvitation(String player1, ServerHandler player2) {
+        if (player2 != null) {
+            JsonObject inv = new JsonObject();
+            inv.addProperty("operation ", "gameRequest");
+            inv.addProperty("playerReqName", player1);
+
+            try {
+                player2.dos.writeUTF(inv.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
@@ -231,16 +255,15 @@ class ServerHandler extends Thread
                         String response = object.get("answer").getAsString();
                         JsonObject obj = new JsonObject();
                         JsonObject gameIdObj = new JsonObject();
-                        gameIdObj.addProperty("operation", "getGameId");
                         obj.addProperty("operation", "player2Response");
                         if (response.equals("true")) {
                             gameId = gs.startGame(player1, player2);
                             gs.saveChanges();
-                            gameIdObj.addProperty("gameId", gameId);
-                            obj.addProperty("answer", "true");
+                            obj.addProperty("answer", true);
+                            sendCreatedGameToBothPlayer(player1, player2, gameId);
                         } else {
                             gameIdObj.addProperty("gameId", -1);
-                            obj.addProperty("answer", "false");
+                            obj.addProperty("answer", false);
                         }
 
                         dos.writeUTF(obj.toString());
