@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import model.Entities.User;
 import services.GameServices;
+import services.RecordsServices;
 import services.UsersServices;
 
 import java.io.DataInputStream;
@@ -50,8 +51,13 @@ class ServerHandler extends Thread
     DataInputStream dis;
     Socket clientSocket;
     String serverHandlerUsername;
+    Boolean gameFinished=false;
+    int gameId;
+    RecordsServices rS;
    static ArrayList<ServerHandler> connectedClients = new ArrayList<ServerHandler>();
     List<ServerHandler> inGameHandlers = new ArrayList<>();
+    static String moves;
+    static List <String> movesArr =  new ArrayList<>();
    public ServerHandler(Socket s){
        connectedClients.add(this);
        clientSocket=s;
@@ -182,6 +188,16 @@ class ServerHandler extends Thread
                e.printStackTrace();
            }
        }
+       movesArr.add(move);
+       if(movesArr.size() == 1)
+           moves = move;
+       else if (movesArr.size()==9 || gameFinished ) {
+           rS.createRecord(moves,player1,gameId);
+           moves = null;
+           movesArr.clear();
+       }
+       else
+           moves = moves.concat(move);
 
     }
 
@@ -276,7 +292,7 @@ class ServerHandler extends Thread
                        sendInvitation(player1 , ser);
                         break;
                     case "invResponse":
-                        int gameId;
+
                         String response = object.get("answer").getAsString();
                         JsonObject obj = new JsonObject();
                         JsonObject gameIdObj = new JsonObject();

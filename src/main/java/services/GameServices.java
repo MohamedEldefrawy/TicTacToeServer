@@ -72,14 +72,14 @@ public class GameServices {
         currentGame.setWinner(gameDto.getWhoWins());
     }
 
-    public void saveGame(RecordDto recordDto) {
+   /* public void saveGame(RecordDto recordDto) {
         recordsServices = new RecordsServices();
 
         if (connection == null)
             connection = new DbConnection().getConnection();
 
         recordsServices.createRecord(recordDto);
-    }
+    }*/
 
     public LoadGameDto loadGame(RecordDto recordDto) {
         query = "select g.id,playerOneName,playerTwoName,winner,timeStamp,requesterName,steps\n" +
