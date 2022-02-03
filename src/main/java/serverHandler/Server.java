@@ -95,7 +95,8 @@ class ServerHandler extends Thread
         }
         return jA;
     }
-    public void sendToAll(JsonArray jA){
+
+    public void sendOnlineUsersToAllClient(JsonArray jA) {
         if (connectedClients.size() > 1) {
             for (ServerHandler sH : connectedClients) {
                 JsonObject obj = new JsonObject();
@@ -180,7 +181,7 @@ class ServerHandler extends Thread
                         }
                         if (loginCheck) {
                             onlineObjs = getOnlineObjects();
-                            sendToAll(onlineObjs);
+                            sendOnlineUsersToAllClient(onlineObjs);
                             System.out.println(onlineObjs.toString());
                         }
                         break;
@@ -191,7 +192,7 @@ class ServerHandler extends Thread
                         JsonArray online = new JsonArray();
                         online = getOnlineObjects();
                         if (online.size() > 0)
-                            sendToAll(online);
+                            sendOnlineUsersToAllClient(online);
                         System.out.println(online.toString());
                         close(dos, dis, clientSocket);
                         break;
@@ -222,7 +223,7 @@ class ServerHandler extends Thread
                         player2 = object.get("player2").getAsString();
                         JsonObject deliverInvitationObj = new JsonObject();
                         deliverInvitationObj.addProperty("operation", "receiveInvitation");
-                        deliverInvitationObj.addProperty("opponentName", player2);
+                        deliverInvitationObj.addProperty("opponentName", player1);
                         dos.writeUTF(deliverInvitationObj.toString());
                         break;
                     case "invResponse":
