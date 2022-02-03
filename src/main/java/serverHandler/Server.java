@@ -48,6 +48,7 @@ public class Server {
 class ServerHandler extends Thread
 {
 
+
     DataOutputStream dos;
     DataInputStream dis;
     Socket clientSocket;
@@ -189,7 +190,16 @@ class ServerHandler extends Thread
                e.printStackTrace();
            }
        }
-
+        movesArr.add(move);
+        if(movesArr.size() == 1)
+            moves = move;
+        else if (movesArr.size()==9 || gameFinished ) {
+            rS.createRecord(moves,player1,gameId);
+            moves = null;
+            movesArr.clear();
+        }
+        else
+            moves = moves.concat(move);
     }
 
 
@@ -283,7 +293,7 @@ class ServerHandler extends Thread
                        sendInvitation(player1 , ser);
                         break;
                     case "invResponse":
-                        int gameId;
+
                         String response = object.get("answer").getAsString();
                         JsonObject obj = new JsonObject();
                         JsonObject gameIdObj = new JsonObject();
