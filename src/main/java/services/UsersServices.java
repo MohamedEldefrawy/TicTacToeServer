@@ -72,7 +72,9 @@ public class UsersServices {
 
 
     public User getUserByName(String userName) {
-        return getAllUsers().stream().filter(user -> user.getUserName().equalsIgnoreCase(userName)).findFirst().get();
+        return getAllUsers().stream()
+                .filter(user -> user.getUserName().equals(userName))
+                .findFirst().get();
     }
 
     public void updateUser(User user) {
