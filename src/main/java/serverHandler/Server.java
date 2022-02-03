@@ -229,19 +229,21 @@ class ServerHandler extends Thread
                         int gameId;
                         String response = object.get("answer").getAsString();
                         JsonObject obj = new JsonObject();
+                        JsonObject gameIdObj = new JsonObject();
+                        gameIdObj.addProperty("operation", "getGameId");
                         obj.addProperty("operation", "player2Response");
-
                         if (response.equals("true")) {
                             gameId = gs.startGame(player1, player2);
                             gs.saveChanges();
+                            gameIdObj.addProperty("gameId", gameId);
                             obj.addProperty("answer", "true");
-                            obj.addProperty("gameId", gameId);
                         } else {
+                            gameIdObj.addProperty("gameId", -1);
                             obj.addProperty("answer", "false");
-                            obj.addProperty("gameId", -1);
                         }
 
                         dos.writeUTF(obj.toString());
+                        dos.writeUTF(gameIdObj.toString());
                         break;
                 }
 
