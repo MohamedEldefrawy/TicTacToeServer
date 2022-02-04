@@ -62,6 +62,7 @@ public class Server  {
         }
     }
     public void stopServerHandlerThread(){
+        System.out.println("closed");
         socketIsClosed=true;
         exit=true;
         try {

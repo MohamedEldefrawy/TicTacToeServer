@@ -1,13 +1,12 @@
 package controllers;
 
 import com.jfoenix.controls.JFXButton;
+import com.server.HelloApplication;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.Entities.Game;
 import model.Entities.Record;
@@ -20,6 +19,7 @@ import services.UsersServices;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class ServerMenuController implements Initializable {
@@ -102,6 +102,7 @@ public class ServerMenuController implements Initializable {
         return list;
     }
 
+
     @FXML
     public void initialize(URL url, ResourceBundle resourceBundle) {
         //initializing usersTable
@@ -130,6 +131,7 @@ public class ServerMenuController implements Initializable {
 
         btnStart.setOnAction(actionEvent -> {server.startServerHandlerThread();});
         btnStop.setOnAction(actionEvent -> {server.stopServerHandlerThread();});
+        HelloApplication.getStage().setOnCloseRequest(event -> {server.stopServerHandlerThread();});
     }
 
 }
