@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -59,6 +60,9 @@ public class ServerMenuController implements Initializable {
     public TableColumn<Record, String> col_requester_name;
     @FXML
     public TableColumn<Record, String> col_steps;
+
+    public Button btnStart;
+    public Button btnStop;
 
     ObservableList<User> usersObservableList = getUsers();
     ObservableList<Game> gamesObservableList = getGames();
