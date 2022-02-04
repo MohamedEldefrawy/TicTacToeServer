@@ -8,8 +8,13 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class HelloApplication extends Application {
+    private static Stage currentStage;
+    public static Stage getStage() {
+        return currentStage;
+    }
     @Override
     public void start(Stage stage) throws IOException {
+        currentStage=stage;
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/server/views/serverMenu.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Hello!");
