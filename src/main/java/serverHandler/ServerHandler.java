@@ -27,7 +27,6 @@ public class ServerHandler extends Thread {
     private UsersServices us = new UsersServices();
     private GameServices gs = new GameServices();
 
-
     public ServerHandler(Socket s) {
         clientSocket = s;
         connectedClients.add(this);

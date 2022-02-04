@@ -1,5 +1,6 @@
 package controllers;
 
+import com.jfoenix.controls.JFXButton;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -11,6 +12,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import model.Entities.Game;
 import model.Entities.Record;
 import model.Entities.User;
+import serverHandler.Server;
 import services.GameServices;
 import services.RecordsServices;
 import services.UsersServices;
@@ -61,8 +63,10 @@ public class ServerMenuController implements Initializable {
     @FXML
     public TableColumn<Record, String> col_steps;
 
-    public Button btnStart;
-    public Button btnStop;
+    public JFXButton btnStop;
+    public JFXButton btnStart;
+    Server server= Server.getServer();
+
 
     ObservableList<User> usersObservableList = getUsers();
     ObservableList<Game> gamesObservableList = getGames();
@@ -123,6 +127,9 @@ public class ServerMenuController implements Initializable {
         col_requester_name.setCellValueFactory(new PropertyValueFactory<Record, String>("requesterName"));
         col_recorded_game_ID.setCellValueFactory(new PropertyValueFactory<Record, Integer>("gameId"));
         records_table.setItems(recordsObservableList);
+
+        btnStart.setOnAction(actionEvent -> {server.startServerHandlerThread();});
+        btnStop.setOnAction(actionEvent -> {server.stopServerHandlerThread();});
     }
 
 }

@@ -7,6 +7,7 @@ module com.server.server {
     requires java.sql;
     requires mysql.connector.java;
     requires com.google.gson;
+    requires com.jfoenix;
 
     opens com.server to javafx.fxml;
     opens model.Entities to javafx.base;
