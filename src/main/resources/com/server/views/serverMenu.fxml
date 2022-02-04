@@ -10,30 +10,25 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
-      prefWidth="600.0" style="-fx-background-color: #2a0049; -fx-border-radius: 80%;"
-      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="controllers.ServerMenuController">
-    <JFXButton fx:id="btnStop" layoutX="26.0" layoutY="29.0" prefHeight="51.0" prefWidth="133.0"
-               style="-fx-background-color: a71347; -fx-background-radius: 30;" text="Stop">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #2a0049; -fx-border-radius: 80%;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ServerMenuController">
+    <JFXButton fx:id="btnStop" layoutX="26.0" layoutY="29.0" prefHeight="51.0" prefWidth="133.0" style="-fx-background-color: a71347; -fx-background-radius: 30;" text="Stop">
         <font>
-            <Font name="System Bold" size="18.0"/>
+            <Font name="System Bold" size="18.0" />
         </font>
     </JFXButton>
-    <Text fill="#ebe121" layoutX="260.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tic "
-          wrappingWidth="76.13671875">
+    <Text fill="#ebe121" layoutX="260.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tic " wrappingWidth="76.13671875">
         <font>
-            <Font name="Cooper Black" size="36.0"/>
+            <Font name="Cooper Black" size="36.0" />
         </font>
     </Text>
     <Text fill="#a71347" layoutX="293.0" layoutY="67.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tac">
         <font>
-            <Font name="Cooper Black" size="36.0"/>
+            <Font name="Cooper Black" size="36.0" />
         </font>
     </Text>
     <Text fill="#ebe121" layoutX="266.0" layoutY="99.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Toe">
         <font>
-            <Font name="Cooper Black" size="36.0"/>
+            <Font name="Cooper Black" size="36.0" />
         </font>
     </Text>
     <TabPane layoutX="26.0" layoutY="107.0" prefHeight="279.0" prefWidth="553.0" tabClosingPolicy="UNAVAILABLE">
@@ -41,12 +36,12 @@
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                 <TableView fx:id="users_table" prefHeight="250.0" prefWidth="553.0">
                     <columns>
-                        <TableColumn fx:id="col_username" prefWidth="95.0" text="User Name"/>
-                        <TableColumn fx:id="col_password" prefWidth="82.0" text="Password"/>
-                        <TableColumn fx:id="col_wins" prefWidth="66.0" text="Wins"/>
-                        <TableColumn fx:id="col_losses" prefWidth="69.0" text="Losses"/>
-                        <TableColumn fx:id="col_draws" prefWidth="63.0" text="Draws"/>
-                        <TableColumn fx:id="col_online" prefWidth="88.0" text="Online"/>
+                        <TableColumn fx:id="col_username" prefWidth="95.0" text="User Name" />
+                        <TableColumn fx:id="col_password" prefWidth="82.0" text="Password" />
+                        <TableColumn fx:id="col_wins" prefWidth="66.0" text="Wins" />
+                        <TableColumn fx:id="col_losses" prefWidth="69.0" text="Losses" />
+                        <TableColumn fx:id="col_draws" prefWidth="63.0" text="Draws" />
+                        <TableColumn fx:id="col_online" prefWidth="88.0" text="Online" />
                     </columns>
                 </TableView>
             </AnchorPane>
@@ -55,11 +50,11 @@
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                 <TableView fx:id="games_table" prefHeight="250.0" prefWidth="553.0">
                     <columns>
-                        <TableColumn fx:id="col_game_ID" prefWidth="75.0" text="Game ID"/>
-                        <TableColumn fx:id="col_player_one_name" prefWidth="112.0" text="Player one name"/>
-                        <TableColumn fx:id="col_player_two_name" prefWidth="112.0" text="Player two name"/>
-                        <TableColumn fx:id="col_winner" prefWidth="93.0" text="Winner"/>
-                        <TableColumn fx:id="col_time" prefWidth="158.0" text="Time"/>
+                        <TableColumn fx:id="col_game_ID" prefWidth="75.0" text="Game ID" />
+                        <TableColumn fx:id="col_player_one_name" prefWidth="112.0" text="Player one name" />
+                        <TableColumn fx:id="col_player_two_name" prefWidth="112.0" text="Player two name" />
+                        <TableColumn fx:id="col_winner" prefWidth="93.0" text="Winner" />
+                        <TableColumn fx:id="col_time" prefWidth="158.0" text="Time" />
                     </columns>
                 </TableView>
             </AnchorPane>
@@ -68,19 +63,23 @@
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                 <TableView fx:id="records_table" prefHeight="250.0" prefWidth="553.0">
                     <columns>
-                        <TableColumn fx:id="col_record_ID" prefWidth="75.0" text="ID"/>
-                        <TableColumn fx:id="col_recorded_game_ID" prefWidth="75.0" text="Game ID"/>
-                        <TableColumn fx:id="col_requester_name" prefWidth="112.0" text="Requester name"/>
-                        <TableColumn fx:id="col_steps" prefWidth="174.0" text="Steps"/>
+                        <TableColumn fx:id="col_record_ID" prefWidth="75.0" text="ID" />
+                        <TableColumn fx:id="col_recorded_game_ID" prefWidth="75.0" text="Game ID" />
+                        <TableColumn fx:id="col_requester_name" prefWidth="112.0" text="Requester name" />
+                        <TableColumn fx:id="col_steps" prefWidth="174.0" text="Steps" />
                     </columns>
                 </TableView>
             </AnchorPane>
         </Tab>
     </TabPane>
-    <JFXButton fx:id="btnStart" layoutX="446.0" layoutY="29.0" prefHeight="51.0" prefWidth="133.0"
-               style="-fx-background-color: ebe121; -fx-background-radius: 30;" text="Start">
+    <JFXButton fx:id="btnStart" layoutX="446.0" layoutY="29.0" prefHeight="51.0" prefWidth="133.0" style="-fx-background-color: ebe121; -fx-background-radius: 30;" text="Start">
         <font>
-            <Font name="System Bold" size="18.0"/>
+            <Font name="System Bold" size="18.0" />
         </font>
     </JFXButton>
+   <JFXButton fx:id="btnRefresh" layoutX="497.0" layoutY="108.0" prefHeight="24.0" prefWidth="76.0" style="-fx-background-color: ffffff; -fx-border-width: 1; -fx-border-color: BLACK; -fx-border-radius: 30; -fx-background-radius: 30;" text="Refresh">
+      <font>
+         <Font name="System Bold" size="12.0" />
+      </font>
+   </JFXButton>
 </Pane>

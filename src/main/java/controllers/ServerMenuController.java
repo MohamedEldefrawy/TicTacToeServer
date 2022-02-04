@@ -65,6 +65,7 @@ public class ServerMenuController implements Initializable {
 
     public JFXButton btnStop;
     public JFXButton btnStart;
+    public JFXButton btnRefresh;
     Server server= Server.getServer();
 
 
@@ -72,7 +73,7 @@ public class ServerMenuController implements Initializable {
     ObservableList<Game> gamesObservableList = getGames();
     ObservableList<Record> recordsObservableList = getRecords();
 
-    public ObservableList<User> getUsers() {
+    private ObservableList<User> getUsers() {
         ObservableList<User> list = FXCollections.observableArrayList();
         UsersServices usersServices = new UsersServices();
         List<User> users = usersServices.getAllUsers();
@@ -101,6 +102,18 @@ public class ServerMenuController implements Initializable {
         }
         return list;
     }
+    private void refreshTables() {
+        usersObservableList.clear();
+        usersObservableList.addAll(getUsers());
+        users_table.refresh();
+        gamesObservableList.clear();
+        gamesObservableList.addAll(getGames());
+        games_table.refresh();
+        recordsObservableList.clear();
+        recordsObservableList.addAll(getRecords());
+        records_table.refresh();
+    }
+
 
 
     @FXML
@@ -131,7 +144,7 @@ public class ServerMenuController implements Initializable {
 
         btnStart.setOnAction(actionEvent -> {server.startServerHandlerThread();});
         btnStop.setOnAction(actionEvent -> {server.stopServerHandlerThread();});
+        btnRefresh.setOnAction(actionEvent -> {refreshTables();});
         HelloApplication.getStage().setOnCloseRequest(event -> {server.stopServerHandlerThread();});
     }
-
 }
