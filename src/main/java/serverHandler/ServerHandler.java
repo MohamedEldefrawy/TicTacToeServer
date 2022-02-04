@@ -139,11 +139,12 @@ public class ServerHandler extends Thread {
         }
     }
 
-    public void sendPlayerMove(String player, String move) {
+    public void sendPlayerMove(String player, String move, String sign) {
         JsonObject playerMoveObj = new JsonObject();
         playerMoveObj.addProperty("operation", "playerMove");
         playerMoveObj.addProperty("playerName", player);
         playerMoveObj.addProperty("position", move);
+        playerMoveObj.addProperty("sign", sign);
         if (player.equals(inGameHandlers.get(0).serverHandlerUsername)) {
             try {
                 inGameHandlers.get(1).dos.writeUTF(playerMoveObj.toString());
@@ -261,11 +262,13 @@ public class ServerHandler extends Thread {
                         dos.writeUTF(gameIdObj.toString());
                         break;
                     case "playerMove":
-                        String player, move;
+                        String player, move, sign;
                         player = object.get("playerName").getAsString();
                         move = object.get("position").getAsString();
-                        sendPlayerMove(player, move);
-                        System.out.println("player " + player + " has played " + move);
+                        sign = object.get("sign").getAsString();
+                        sendPlayerMove(player, move, sign);
+                        System.out.println("player " + player + " has played "
+                                + sign + " in position" + move);
                 }
 
 
