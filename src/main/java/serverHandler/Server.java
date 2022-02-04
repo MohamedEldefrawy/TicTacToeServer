@@ -49,6 +49,11 @@ public class Server  {
             listener = new Thread(() -> {
                 while(!exit && !socketIsClosed){
                     try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    try {
                         socket = serverSocket.accept();
                         serverHandler=new ServerHandler(socket);
                     }catch (IOException ex) {
@@ -63,6 +68,8 @@ public class Server  {
     }
     public void stopServerHandlerThread(){
         System.out.println("closed");
+        if(serverHandler!=null)
+            serverHandler.close();
         socketIsClosed=true;
         exit=true;
         try {

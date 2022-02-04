@@ -43,11 +43,11 @@ public class ServerHandler extends Thread {
         }
     }
 
-    public void close(DataOutputStream dout, DataInputStream di, Socket ss) {
+    public void close() {
         try {
-            dout.close();
-            di.close();
-            ss.close();
+            dos.close();
+            dis.close();
+            clientSocket.close();
             this.stop();
         } catch (IOException e) {
             e.printStackTrace();
@@ -207,7 +207,7 @@ public class ServerHandler extends Thread {
                             sendOnlineUsersToAllClient(online);
                         System.out.println(online.toString());
                         connectedClients.remove(this);
-                        close(dos, dis, clientSocket);
+                        close();
                         break;
 
                     case "signUp":
@@ -271,7 +271,7 @@ public class ServerHandler extends Thread {
 
             } catch (IOException e) {
                 e.printStackTrace();
-                close(dos, dis, clientSocket);
+                close();
             }
         }
     }
