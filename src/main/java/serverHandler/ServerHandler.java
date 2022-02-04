@@ -259,10 +259,10 @@ public class ServerHandler extends Thread {
                         dos.writeUTF(obj.toString());
                         dos.writeUTF(gameIdObj.toString());
                         break;
-                    case "game":
+                    case "playerMove":
                         String player, move;
-                        player = object.get("playerMove").getAsString();
-                        move = object.get("move").getAsString();
+                        player = object.get("playerName").getAsString();
+                        move = object.get("position").getAsString();
                         sendPlayerMove(player, move);
                 }
 
