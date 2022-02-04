@@ -21,7 +21,7 @@ public class ServerHandler extends Thread {
     private Socket clientSocket;
     private String serverHandlerUsername;
     private static ArrayList<ServerHandler> connectedClients = new ArrayList<ServerHandler>();
-    private List<ServerHandler> inGameHandlers = new ArrayList<>();
+    private static List<ServerHandler> inGameHandlers = new ArrayList<>();
     private String message;
     private static ReceiveInvitationDto receiveInvitationDto = new ReceiveInvitationDto();
     private UsersServices us = new UsersServices();
@@ -141,9 +141,10 @@ public class ServerHandler extends Thread {
 
     public void sendPlayerMove(String player, String move) {
         JsonObject playerMoveObj = new JsonObject();
-        playerMoveObj.addProperty("PlayerName", player);
-        playerMoveObj.addProperty("move", move);
-        if (player.equalsIgnoreCase(inGameHandlers.get(0).serverHandlerUsername)) {
+        playerMoveObj.addProperty("operation", "playerMove");
+        playerMoveObj.addProperty("playerName", player);
+        playerMoveObj.addProperty("position", move);
+        if (player.equals(inGameHandlers.get(0).serverHandlerUsername)) {
             try {
                 inGameHandlers.get(1).dos.writeUTF(playerMoveObj.toString());
             } catch (IOException e) {
@@ -264,6 +265,7 @@ public class ServerHandler extends Thread {
                         player = object.get("playerName").getAsString();
                         move = object.get("position").getAsString();
                         sendPlayerMove(player, move);
+                        System.out.println("player " + player + " has played " + move);
                 }
 
 
