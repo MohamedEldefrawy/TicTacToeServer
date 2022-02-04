@@ -44,7 +44,7 @@ public class Server  {
 
     private void initServer(){
         try {
-            serverSocket = new ServerSocket(2022);
+            serverSocket = new ServerSocket(5005);
             System.out.println(serverSocket.getLocalPort());
             listener = new Thread(() -> {
                 while(!exit && !socketIsClosed){
