@@ -1,23 +1,8 @@
 package serverHandler;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import model.Entities.User;
-import services.GameServices;
-import services.UsersServices;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Inet4Address;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Server  {
     private static Server server=null;
@@ -73,8 +58,10 @@ public class Server  {
         socketIsClosed=true;
         exit=true;
         try {
-            listener.stop();
-            serverSocket.close();
+            if (listener != null)
+                listener.stop();
+            if (serverSocket != null)
+                serverSocket.close();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
