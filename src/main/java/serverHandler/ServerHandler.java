@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import model.DTOs.ReceiveInvitationDto;
 import model.Entities.User;
 import services.GameServices;
+import services.RecordsServices;
 import services.UsersServices;
 
 import java.io.DataInputStream;
@@ -26,6 +27,11 @@ public class ServerHandler extends Thread {
     private static ReceiveInvitationDto receiveInvitationDto = new ReceiveInvitationDto();
     private UsersServices us = new UsersServices();
     private GameServices gs = new GameServices();
+    int gameId;
+    static String moves;
+    static List<String> movesArr = new ArrayList<>();
+
+    RecordsServices rs = new RecordsServices();
 
     public ServerHandler(Socket s) {
         clientSocket = s;
@@ -139,7 +145,7 @@ public class ServerHandler extends Thread {
         }
     }
 
-    public void sendPlayerMove(String player, String move, String sign) {
+    public void sendPlayerMove(String player, String move, String sign,Boolean gameFinished) {
         JsonObject playerMoveObj = new JsonObject();
         playerMoveObj.addProperty("operation", "playerMove");
         playerMoveObj.addProperty("playerName", player);
@@ -158,7 +164,49 @@ public class ServerHandler extends Thread {
                 e.printStackTrace();
             }
         }
+        movesArr.add(move);
+        if(movesArr.size() == 1)
+            moves = move;
+        else if (movesArr.size()==9 || !gameFinished ) {
+            rs.createRecord(moves,receiveInvitationDto.getUserName(),gameId);
+            moves = null;
+            movesArr.clear();
+            inGameHandlers.clear();
+        }
+        else
+            moves = moves.concat(move);
 
+    }
+    public void finishGame(String winner)
+    {
+        User user1 = us.getUserByName(receiveInvitationDto.getUserName());
+        User user2 = us.getUserByName(receiveInvitationDto.getOpponentUserName());
+        if (winner.equals("draw")){
+
+            user1.setDraws(user1.getDraws()+1);
+            user2.setDraws(user2.getDraws()+1);
+            us.updateUser(user1);
+            us.updateUser(user2);
+            gs.setWinner(gameId,0);
+        }
+        else {
+            if(winner.equals(receiveInvitationDto.getUserName())){
+                user1.setWins(user1.getWins()+1);
+                user2.setLosses(user2.getLosses()+1);
+                us.updateUser(user1);
+                us.updateUser(user2);
+                gs.setWinner(gameId,1);
+            }
+            else{
+                user2.setWins(user2.getWins()+1);
+                user1.setLosses(user1.getLosses()+1);
+                us.updateUser(user1);
+                us.updateUser(user2);
+                gs.setWinner(gameId,2);
+            }
+
+        }
+        receiveInvitationDto = null;
     }
 
     public void run() {
@@ -241,7 +289,7 @@ public class ServerHandler extends Thread {
                         System.out.println("from invitation opponent name = " + receiveInvitationDto.getOpponentUserName());
                         break;
                     case "invResponse":
-                        int gameId;
+
                         String response = object.get("answer").getAsString();
                         JsonObject obj = new JsonObject();
                         JsonObject gameIdObj = new JsonObject();
@@ -262,11 +310,16 @@ public class ServerHandler extends Thread {
                         dos.writeUTF(gameIdObj.toString());
                         break;
                     case "playerMove":
-                        String player, move, sign;
+                        String player, move, sign,winner;
+                        Boolean isFinished;
                         player = object.get("playerName").getAsString();
                         move = object.get("position").getAsString();
                         sign = object.get("sign").getAsString();
-                        sendPlayerMove(player, move, sign);
+                        isFinished= object.get("isFinished").getAsBoolean();
+                        winner = object.get("winner").getAsString();
+                        sendPlayerMove(player, move, sign,isFinished);
+                        if(!winner.equals(null)){finishGame(winner);}
+
                         System.out.println("player " + player + " has played "
                                 + sign + " in position" + move);
                 }
