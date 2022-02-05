@@ -27,10 +27,10 @@ public class ServerHandler extends Thread {
     private static ReceiveInvitationDto receiveInvitationDto = new ReceiveInvitationDto();
     private UsersServices us = new UsersServices();
     private GameServices gs = new GameServices();
-     static int gameId;
-    static String moves;
+    private static int gameId;
+    private static String moves;
     static List<String> movesArr = new ArrayList<>();
-    Boolean isFinished=false;
+    Boolean isFinished = false;
     RecordsServices rs = new RecordsServices();
 
     public ServerHandler(Socket s) {
@@ -188,7 +188,8 @@ public class ServerHandler extends Thread {
             user2.setDraws(user2.getDraws()+1);
             us.updateUser(user1);
             us.updateUser(user2);
-            gs.setWinner(gameId,0);
+            gs.setWinner(gameId, 0);
+            us.saveChanges();
         }
         else {
             if(winner.equals(receiveInvitationDto.getUserName())){
@@ -196,14 +197,16 @@ public class ServerHandler extends Thread {
                 user2.setLosses(user2.getLosses()+1);
                 us.updateUser(user1);
                 us.updateUser(user2);
-                gs.setWinner(gameId,1);
+                gs.setWinner(gameId, 1);
+                us.saveChanges();
             }
             else{
                 user2.setWins(user2.getWins()+1);
                 user1.setLosses(user1.getLosses()+1);
                 us.updateUser(user1);
                 us.updateUser(user2);
-                gs.setWinner(gameId,2);
+                gs.setWinner(gameId, 2);
+                us.saveChanges();
             }
 
         }

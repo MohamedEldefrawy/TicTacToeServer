@@ -83,6 +83,8 @@ public class UsersServices {
             this.preparedStatement.setInt(2, user.getLosses());
             this.preparedStatement.setInt(3, user.getDraws());
             this.preparedStatement.setString(4, user.getUserName());
+            this.preparedStatement.addBatch();
+            this.preparedStatement.executeBatch();
         } catch (SQLException e) {
             e.printStackTrace();
         }
