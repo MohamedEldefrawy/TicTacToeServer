@@ -72,6 +72,23 @@ public class GameServices {
         currentGame.setWinner(gameDto.getWhoWins());
     }
 
+    public  void setWinner(int gameId,int winner){
+        connection = new DbConnection().getConnection();
+        String query = "update games set Winner = ? where id = ?";
+        try {
+            this.preparedStatement = connection.prepareStatement(query);
+            this.preparedStatement.setInt(1,winner);
+            this.preparedStatement.setInt(2,gameId);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+
+    }
+
+
+
+
    /* public void saveGame(RecordDto recordDto) {
         recordsServices = new RecordsServices();
 

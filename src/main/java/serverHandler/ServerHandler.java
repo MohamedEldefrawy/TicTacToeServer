@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import model.DTOs.ReceiveInvitationDto;
 import model.Entities.User;
 import services.GameServices;
+import services.RecordsServices;
 import services.UsersServices;
 
 import java.io.DataInputStream;
@@ -26,6 +27,11 @@ public class ServerHandler extends Thread {
     private static ReceiveInvitationDto receiveInvitationDto = new ReceiveInvitationDto();
     private UsersServices us = new UsersServices();
     private GameServices gs = new GameServices();
+     static int gameId;
+    static String moves;
+    static List<String> movesArr = new ArrayList<>();
+    Boolean isFinished=false;
+    RecordsServices rs = new RecordsServices();
 
     public ServerHandler(Socket s) {
         clientSocket = s;
@@ -159,6 +165,50 @@ public class ServerHandler extends Thread {
                 e.printStackTrace();
             }
         }
+        movesArr.add(move);
+        if(movesArr.size() == 1)
+            moves = move;
+        else if (movesArr.size()==9 || isFinished ) {
+            rs.createRecord(moves,receiveInvitationDto.getUserName(),gameId);
+            moves = null;
+            movesArr.clear();
+            inGameHandlers.clear();
+        }
+        else
+            moves = moves.concat(move);
+
+    }
+    public void finishGame(String winner)
+    {
+        User user1 = us.getUserByName(receiveInvitationDto.getUserName());
+        User user2 = us.getUserByName(receiveInvitationDto.getOpponentUserName());
+        if (winner.equals("draw")){
+
+            user1.setDraws(user1.getDraws()+1);
+            user2.setDraws(user2.getDraws()+1);
+            us.updateUser(user1);
+            us.updateUser(user2);
+            gs.setWinner(gameId,0);
+        }
+        else {
+            if(winner.equals(receiveInvitationDto.getUserName())){
+                user1.setWins(user1.getWins()+1);
+                user2.setLosses(user2.getLosses()+1);
+                us.updateUser(user1);
+                us.updateUser(user2);
+                gs.setWinner(gameId,1);
+            }
+            else{
+                user2.setWins(user2.getWins()+1);
+                user1.setLosses(user1.getLosses()+1);
+                us.updateUser(user1);
+                us.updateUser(user2);
+                gs.setWinner(gameId,2);
+            }
+
+        }
+        receiveInvitationDto = new ReceiveInvitationDto();
+        gameId = -1;
     }
 
     public void run() {
@@ -241,7 +291,7 @@ public class ServerHandler extends Thread {
                         System.out.println("from invitation opponent name = " + receiveInvitationDto.getOpponentUserName());
                         break;
                     case "invResponse":
-                        int gameId;
+
                         String response = object.get("answer").getAsString();
                         JsonObject obj = new JsonObject();
                         JsonObject gameIdObj = new JsonObject();
@@ -252,8 +302,11 @@ public class ServerHandler extends Thread {
                             gameId = gs.startGame(receiveInvitationDto.getUserName(), receiveInvitationDto.getOpponentUserName());
                             gs.saveChanges();
                             obj.addProperty("answer", true);
-                            sendCreatedGameToBothPlayer(receiveInvitationDto.getUserName(), receiveInvitationDto.getOpponentUserName(), gameId);
-                        } else {
+                            if(gameId!=-1) {
+                                sendCreatedGameToBothPlayer(receiveInvitationDto.getUserName(), receiveInvitationDto.getOpponentUserName(), gameId);
+                            }
+                            }
+                            else {
                             gameIdObj.addProperty("gameId", -1);
                             obj.addProperty("answer", false);
                         }
@@ -271,6 +324,13 @@ public class ServerHandler extends Thread {
                         sendPlayerMove(player, move, sign, gameState);
                         System.out.println("player " + player + " has played "
                                 + sign + " in position" + move);
+                        break;
+                    case "gameFinished" :
+                        String winner;
+                        isFinished= object.get("isFinished").getAsBoolean();
+                        winner = object.get("winner").getAsString();
+                        if(isFinished){finishGame(winner);}
+                        break;
                 }
 
 
