@@ -167,7 +167,7 @@ public class ServerHandler extends Thread {
         movesArr.add(move);
         if(movesArr.size() == 1)
             moves = move;
-        else if (movesArr.size()==9 || !gameFinished ) {
+        else if (movesArr.size()==9 || gameFinished ) {
             rs.createRecord(moves,receiveInvitationDto.getUserName(),gameId);
             moves = null;
             movesArr.clear();
@@ -318,7 +318,7 @@ public class ServerHandler extends Thread {
                         isFinished= object.get("isFinished").getAsBoolean();
                         winner = object.get("winner").getAsString();
                         sendPlayerMove(player, move, sign,isFinished);
-                        if(!winner.equals(null)){finishGame(winner);}
+                        if(isFinished){finishGame(winner);}
 
                         System.out.println("player " + player + " has played "
                                 + sign + " in position" + move);
