@@ -27,7 +27,7 @@ public class ServerHandler extends Thread {
     private static ReceiveInvitationDto receiveInvitationDto = new ReceiveInvitationDto();
     private UsersServices us = new UsersServices();
     private GameServices gs = new GameServices();
-    int gameId;
+     static int gameId;
     static String moves;
     static List<String> movesArr = new ArrayList<>();
     Boolean isFinished=false;
@@ -207,6 +207,7 @@ public class ServerHandler extends Thread {
 
         }
         receiveInvitationDto = new ReceiveInvitationDto();
+        gameId = -1;
     }
 
     public void run() {
@@ -300,8 +301,11 @@ public class ServerHandler extends Thread {
                             gameId = gs.startGame(receiveInvitationDto.getUserName(), receiveInvitationDto.getOpponentUserName());
                             gs.saveChanges();
                             obj.addProperty("answer", true);
-                            sendCreatedGameToBothPlayer(receiveInvitationDto.getUserName(), receiveInvitationDto.getOpponentUserName(), gameId);
-                        } else {
+                            if(gameId!=-1) {
+                                sendCreatedGameToBothPlayer(receiveInvitationDto.getUserName(), receiveInvitationDto.getOpponentUserName(), gameId);
+                            }
+                            }
+                            else {
                             gameIdObj.addProperty("gameId", -1);
                             obj.addProperty("answer", false);
                         }
