@@ -30,7 +30,7 @@ public class ServerHandler extends Thread {
     int gameId;
     static String moves;
     static List<String> movesArr = new ArrayList<>();
-
+    Boolean isFinished=false;
     RecordsServices rs = new RecordsServices();
 
     public ServerHandler(Socket s) {
@@ -145,7 +145,7 @@ public class ServerHandler extends Thread {
         }
     }
 
-    public void sendPlayerMove(String player, String move, String sign,Boolean gameFinished) {
+    public void sendPlayerMove(String player, String move, String sign) {
         JsonObject playerMoveObj = new JsonObject();
         playerMoveObj.addProperty("operation", "playerMove");
         playerMoveObj.addProperty("playerName", player);
@@ -167,7 +167,7 @@ public class ServerHandler extends Thread {
         movesArr.add(move);
         if(movesArr.size() == 1)
             moves = move;
-        else if (movesArr.size()==9 || gameFinished ) {
+        else if (movesArr.size()==9 || isFinished ) {
             rs.createRecord(moves,receiveInvitationDto.getUserName(),gameId);
             moves = null;
             movesArr.clear();
@@ -310,18 +310,24 @@ public class ServerHandler extends Thread {
                         dos.writeUTF(gameIdObj.toString());
                         break;
                     case "playerMove":
-                        String player, move, sign,winner;
-                        Boolean isFinished;
+                        String player, move, sign;
+
                         player = object.get("playerName").getAsString();
                         move = object.get("position").getAsString();
                         sign = object.get("sign").getAsString();
-                        isFinished= object.get("isFinished").getAsBoolean();
-                        winner = object.get("winner").getAsString();
-                        sendPlayerMove(player, move, sign,isFinished);
-                        if(isFinished){finishGame(winner);}
+
+                        sendPlayerMove(player, move, sign);
+
 
                         System.out.println("player " + player + " has played "
                                 + sign + " in position" + move);
+                        break;
+                    case "gameFinished" :
+                        String winner;
+                        isFinished= object.get("isFinished").getAsBoolean();
+                        winner = object.get("winner").getAsString();
+                        if(isFinished){finishGame(winner);}
+                        break;
                 }
 
 
