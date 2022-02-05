@@ -206,7 +206,7 @@ public class ServerHandler extends Thread {
             }
 
         }
-        receiveInvitationDto = null;
+        receiveInvitationDto = new ReceiveInvitationDto();
     }
 
     public void run() {
