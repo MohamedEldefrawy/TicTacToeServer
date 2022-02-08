@@ -14,7 +14,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ServerHandler extends Thread {
     private DataOutputStream dos;
@@ -22,7 +24,7 @@ public class ServerHandler extends Thread {
     private Socket clientSocket;
     private String serverHandlerUsername;
     private static ArrayList<ServerHandler> connectedClients = new ArrayList<ServerHandler>();
-    private static List<ServerHandler> inGameHandlers = new ArrayList<>();
+    private static Map<Integer, List<ServerHandler>> gamesOn = new HashMap<>();
     private String message;
     private static ReceiveInvitationDto receiveInvitationDto = new ReceiveInvitationDto();
     private UsersServices us = new UsersServices();
@@ -102,11 +104,16 @@ public class ServerHandler extends Thread {
     public void sendCreatedGameToBothPlayer(String player1, String player2, int gameId) {
         if (connectedClients.size() != 0) {
 
-            inGameHandlers.add(getHandlerByUsername(player1));
-            inGameHandlers.add(getHandlerByUsername(player2));
-            connectedClients.forEach(serverHandler -> System.out.println("server Handlers online = " + serverHandler.serverHandlerUsername));
-            inGameHandlers.forEach(serverHandler -> System.out.println(serverHandler.serverHandlerUsername));
-            for (ServerHandler handler : inGameHandlers) {
+            List<ServerHandler> playersOfGame = new ArrayList<>();
+            playersOfGame.add(getHandlerByUsername(player1));
+            playersOfGame.add(getHandlerByUsername(player2));
+
+            gamesOn.put(gameId, playersOfGame);
+//            inGameHandlers.add(getHandlerByUsername(player1));
+//            inGameHandlers.add(getHandlerByUsername(player2));
+//            connectedClients.forEach(serverHandler -> System.out.println("server Handlers online = " + serverHandler.serverHandlerUsername));
+//            inGameHandlers.forEach(serverHandler -> System.out.println(serverHandler.serverHandlerUsername));
+            for (ServerHandler handler : gamesOn.get(gameId)) {
                 JsonObject createdGameObject = new JsonObject();
                 createdGameObject.addProperty("operation", "getCreatedGame");
                 createdGameObject.addProperty("gameId", gameId);
@@ -145,22 +152,23 @@ public class ServerHandler extends Thread {
         }
     }
 
-    public void sendPlayerMove(String player, String move, String sign, boolean gameState) {
+    public void sendPlayerMove(String player, String move, String sign, boolean gameState, Integer gameId) {
         JsonObject playerMoveObj = new JsonObject();
         playerMoveObj.addProperty("operation", "playerMove");
         playerMoveObj.addProperty("playerName", player);
         playerMoveObj.addProperty("position", move);
         playerMoveObj.addProperty("sign", sign);
         playerMoveObj.addProperty("gameState", gameState);
-        if (player.equals(inGameHandlers.get(0).serverHandlerUsername)) {
+        playerMoveObj.addProperty("gameId", gameId);
+        if (player.equals(gamesOn.get(gameId).get(0).serverHandlerUsername)) {
             try {
-                inGameHandlers.get(1).dos.writeUTF(playerMoveObj.toString());
+                gamesOn.get(gameId).get(1).dos.writeUTF(playerMoveObj.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
             try {
-                inGameHandlers.get(0).dos.writeUTF(playerMoveObj.toString());
+                gamesOn.get(gameId).get(0).dos.writeUTF(playerMoveObj.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -172,7 +180,7 @@ public class ServerHandler extends Thread {
             rs.createRecord(moves,receiveInvitationDto.getUserName(),gameId);
             moves = null;
             movesArr.clear();
-            inGameHandlers.clear();
+            gamesOn.remove(gameId);
         }
         else
             moves = moves.concat(move);
@@ -192,25 +200,26 @@ public class ServerHandler extends Thread {
             us.saveChanges();
         }
         else {
-            if(winner.equals(receiveInvitationDto.getUserName())){
-                user1.setWins(user1.getWins()+1);
-                user2.setLosses(user2.getLosses()+1);
+            if (winner.equals(receiveInvitationDto.getUserName())) {
+                user1.setWins(user1.getWins() + 1);
+                user2.setLosses(user2.getLosses() + 1);
                 us.updateUser(user1);
                 us.updateUser(user2);
                 gs.setWinner(gameId, 1);
                 us.saveChanges();
-            }
-            else{
-                user2.setWins(user2.getWins()+1);
-                user1.setLosses(user1.getLosses()+1);
+            } else {
+                user2.setWins(user2.getWins() + 1);
+                user1.setLosses(user1.getLosses() + 1);
                 us.updateUser(user1);
                 us.updateUser(user2);
                 gs.setWinner(gameId, 2);
                 us.saveChanges();
             }
 
+
         }
         receiveInvitationDto = new ReceiveInvitationDto();
+        gamesOn.remove(gameId);
         gameId = -1;
     }
 
@@ -319,20 +328,24 @@ public class ServerHandler extends Thread {
                         break;
                     case "playerMove":
                         String player, move, sign;
+                        Integer gameId;
                         boolean gameState;
                         player = object.get("playerName").getAsString();
                         move = object.get("position").getAsString();
                         sign = object.get("sign").getAsString();
                         gameState = object.get("gameState").getAsBoolean();
-                        sendPlayerMove(player, move, sign, gameState);
+                        gameId = object.get("gameId").getAsInt();
+                        sendPlayerMove(player, move, sign, gameState, gameId);
                         System.out.println("player " + player + " has played "
                                 + sign + " in position" + move);
                         break;
-                    case "gameFinished" :
+                    case "gameFinished":
                         String winner;
-                        isFinished= object.get("isFinished").getAsBoolean();
+                        isFinished = object.get("isFinished").getAsBoolean();
                         winner = object.get("winner").getAsString();
-                        if(isFinished){finishGame(winner);}
+                        if (isFinished) {
+                            finishGame(winner);
+                        }
                         break;
                 }
 
