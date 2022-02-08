@@ -8,37 +8,32 @@ import model.Entities.User;
 import services.GameServices;
 import services.RecordsServices;
 import services.UsersServices;
+import utilities.Singleton;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ServerHandler extends Thread {
     private DataOutputStream dos;
     private DataInputStream dis;
-    private Socket clientSocket;
+    private final Socket clientSocket;
     private String serverHandlerUsername;
-    private static ArrayList<ServerHandler> connectedClients = new ArrayList<ServerHandler>();
-    private static Map<Integer, List<ServerHandler>> gamesOn = new HashMap<>();
     private String message;
-    private static ReceiveInvitationDto receiveInvitationDto = new ReceiveInvitationDto();
-    private UsersServices us = new UsersServices();
-    private GameServices gs = new GameServices();
+    private final UsersServices us = new UsersServices();
+    private final GameServices gs = new GameServices();
     private static int gameId;
     private static String moves;
-    static List<String> movesArr = new ArrayList<>();
-    Boolean isFinished = false;
-    RecordsServices rs = new RecordsServices();
+    private Boolean isFinished = false;
+    private RecordsServices rs = new RecordsServices();
+    private Singleton singleton = Singleton.getInstance();
 
     public ServerHandler(Socket s) {
         clientSocket = s;
-        connectedClients.add(this);
-
+        singleton.getConnectedClients().add(this);
         try {
 
             dis = new DataInputStream(s.getInputStream());
@@ -81,8 +76,8 @@ public class ServerHandler extends Thread {
     }
 
     public void sendOnlineUsersToAllClient(JsonArray jA) {
-        if (connectedClients.size() > 1) {
-            for (ServerHandler sH : connectedClients) {
+        if (singleton.getConnectedClients().size() > 1) {
+            for (ServerHandler sH : singleton.getConnectedClients()) {
                 JsonObject obj = new JsonObject();
                 obj.addProperty("operation", "refreshUsers");
                 obj.add("onlineUsers", jA);
@@ -102,18 +97,18 @@ public class ServerHandler extends Thread {
     }
 
     public void sendCreatedGameToBothPlayer(String player1, String player2, int gameId) {
-        if (connectedClients.size() != 0) {
+        if (singleton.getConnectedClients().size() != 0) {
 
             List<ServerHandler> playersOfGame = new ArrayList<>();
             playersOfGame.add(getHandlerByUsername(player1));
             playersOfGame.add(getHandlerByUsername(player2));
 
-            gamesOn.put(gameId, playersOfGame);
+            singleton.getGamesOn().put(gameId, playersOfGame);
 //            inGameHandlers.add(getHandlerByUsername(player1));
 //            inGameHandlers.add(getHandlerByUsername(player2));
 //            connectedClients.forEach(serverHandler -> System.out.println("server Handlers online = " + serverHandler.serverHandlerUsername));
 //            inGameHandlers.forEach(serverHandler -> System.out.println(serverHandler.serverHandlerUsername));
-            for (ServerHandler handler : gamesOn.get(gameId)) {
+            for (ServerHandler handler : singleton.getGamesOn().get(gameId)) {
                 JsonObject createdGameObject = new JsonObject();
                 createdGameObject.addProperty("operation", "getCreatedGame");
                 createdGameObject.addProperty("gameId", gameId);
@@ -130,7 +125,7 @@ public class ServerHandler extends Thread {
     }
 
     public ServerHandler getHandlerByUsername(String player2) {
-        for (ServerHandler sH : connectedClients) {
+        for (ServerHandler sH : singleton.getConnectedClients()) {
             if (player2.equals(sH.serverHandlerUsername))
                 return sH;
         }
@@ -160,47 +155,45 @@ public class ServerHandler extends Thread {
         playerMoveObj.addProperty("sign", sign);
         playerMoveObj.addProperty("gameState", gameState);
         playerMoveObj.addProperty("gameId", gameId);
-        if (player.equals(gamesOn.get(gameId).get(0).serverHandlerUsername)) {
+        if (player.equals(singleton.getGamesOn().get(gameId).get(0).serverHandlerUsername)) {
             try {
-                gamesOn.get(gameId).get(1).dos.writeUTF(playerMoveObj.toString());
+                singleton.getGamesOn().get(gameId).get(1).dos.writeUTF(playerMoveObj.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
             try {
-                gamesOn.get(gameId).get(0).dos.writeUTF(playerMoveObj.toString());
+                singleton.getGamesOn().get(gameId).get(0).dos.writeUTF(playerMoveObj.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        movesArr.add(move);
-        if(movesArr.size() == 1)
+        singleton.getGamesSteps().add(move);
+        if (singleton.getGamesSteps().size() == 1)
             moves = move;
-        else if (movesArr.size()==9 || isFinished ) {
-            rs.createRecord(moves,receiveInvitationDto.getUserName(),gameId);
+        else if (singleton.getGamesSteps().size() == 9 || isFinished) {
+            rs.createRecord(moves, singleton.getReceiveInvitationDto().getUserName(), gameId);
             moves = null;
-            movesArr.clear();
-            gamesOn.remove(gameId);
-        }
-        else
+            singleton.getGamesSteps().clear();
+            singleton.getGamesOn().remove(gameId);
+        } else
             moves = moves.concat(move);
 
     }
-    public void finishGame(String winner)
-    {
-        User user1 = us.getUserByName(receiveInvitationDto.getUserName());
-        User user2 = us.getUserByName(receiveInvitationDto.getOpponentUserName());
-        if (winner.equals("draw")){
 
-            user1.setDraws(user1.getDraws()+1);
-            user2.setDraws(user2.getDraws()+1);
+    public void finishGame(String winner) {
+        User user1 = us.getUserByName(singleton.getReceiveInvitationDto().getUserName());
+        User user2 = us.getUserByName(singleton.getReceiveInvitationDto().getOpponentUserName());
+        if (winner.equals("draw")) {
+
+            user1.setDraws(user1.getDraws() + 1);
+            user2.setDraws(user2.getDraws() + 1);
             us.updateUser(user1);
             us.updateUser(user2);
             gs.setWinner(gameId, 0);
             us.saveChanges();
-        }
-        else {
-            if (winner.equals(receiveInvitationDto.getUserName())) {
+        } else {
+            if (winner.equals(singleton.getReceiveInvitationDto().getUserName())) {
                 user1.setWins(user1.getWins() + 1);
                 user2.setLosses(user2.getLosses() + 1);
                 us.updateUser(user1);
@@ -218,8 +211,8 @@ public class ServerHandler extends Thread {
 
 
         }
-        receiveInvitationDto = new ReceiveInvitationDto();
-        gamesOn.remove(gameId);
+        singleton.setReceiveInvitationDto(new ReceiveInvitationDto());
+        singleton.getGamesOn().remove(gameId);
         gameId = -1;
     }
 
@@ -269,7 +262,7 @@ public class ServerHandler extends Thread {
                         if (online.size() > 1)
                             sendOnlineUsersToAllClient(online);
                         System.out.println(online.toString());
-                        connectedClients.remove(this);
+                        singleton.getConnectedClients().remove(this);
                         close();
                         break;
 
@@ -295,30 +288,29 @@ public class ServerHandler extends Thread {
                         break;
 
                     case "invitation":
-                        receiveInvitationDto.setUserName(object.get("user").getAsString());
-                        receiveInvitationDto.setOpponentUserName(object.get("player2").getAsString());//
-                        ServerHandler serverHandler = getHandlerByUsername(receiveInvitationDto.getOpponentUserName());
-                        sendInvitation(receiveInvitationDto.getUserName(), serverHandler);
-                        System.out.println("from invitation user name = " + receiveInvitationDto.getUserName());
-                        System.out.println("from invitation opponent name = " + receiveInvitationDto.getOpponentUserName());
+                        singleton.getReceiveInvitationDto().setUserName(object.get("user").getAsString());
+                        singleton.getReceiveInvitationDto().setOpponentUserName(object.get("player2").getAsString());//
+                        ServerHandler serverHandler = getHandlerByUsername(singleton.getReceiveInvitationDto().getOpponentUserName());
+                        sendInvitation(singleton.getReceiveInvitationDto().getUserName(), serverHandler);
+                        System.out.println("from invitation user name = " + singleton.getReceiveInvitationDto().getUserName());
+                        System.out.println("from invitation opponent name = " + singleton.getReceiveInvitationDto().getOpponentUserName());
                         break;
                     case "invResponse":
 
                         String response = object.get("answer").getAsString();
                         JsonObject obj = new JsonObject();
                         JsonObject gameIdObj = new JsonObject();
-                        System.out.println("from invResponse user name = " + receiveInvitationDto.getUserName());
-                        System.out.println("from invResponse opponent name = " + receiveInvitationDto.getOpponentUserName());
+                        System.out.println("from invResponse user name = " + singleton.getReceiveInvitationDto().getUserName());
+                        System.out.println("from invResponse opponent name = " + singleton.getReceiveInvitationDto().getOpponentUserName());
                         obj.addProperty("operation", "player2Response");
                         if (response.equals("true")) {
-                            gameId = gs.startGame(receiveInvitationDto.getUserName(), receiveInvitationDto.getOpponentUserName());
+                            gameId = gs.startGame(singleton.getReceiveInvitationDto().getUserName(), singleton.getReceiveInvitationDto().getOpponentUserName());
                             gs.saveChanges();
                             obj.addProperty("answer", true);
-                            if(gameId!=-1) {
-                                sendCreatedGameToBothPlayer(receiveInvitationDto.getUserName(), receiveInvitationDto.getOpponentUserName(), gameId);
+                            if (gameId != -1) {
+                                sendCreatedGameToBothPlayer(singleton.getReceiveInvitationDto().getUserName(), singleton.getReceiveInvitationDto().getOpponentUserName(), gameId);
                             }
-                            }
-                            else {
+                        } else {
                             gameIdObj.addProperty("gameId", -1);
                             obj.addProperty("answer", false);
                         }
