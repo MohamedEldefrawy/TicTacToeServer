@@ -179,6 +179,7 @@ public class GameServices {
                 game.setId(resultSet.getInt(1));
                 game.setPlayerOneName(resultSet.getString(2));
                 game.setPlayerTwoName(resultSet.getString(3));
+                game.setWinner(resultSet.getString(4));
             }
         } catch (SQLException e) {
             e.printStackTrace();
