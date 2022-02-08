@@ -180,12 +180,10 @@ public class ServerHandler extends Thread {
     }
 
     public void finishGame(String winner, int gameId) {
-        if (this.gameId != -1) {
-
+        if (singleton.getGamesOn().get(gameId) != null) {
             User user1 = us.getUserByName(singleton.getReceiveInvitationDto().getUserName());
             User user2 = us.getUserByName(singleton.getReceiveInvitationDto().getOpponentUserName());
             if (winner.equals("draw")) {
-
                 user1.setDraws(user1.getDraws() + 1);
                 user2.setDraws(user2.getDraws() + 1);
                 us.updateUser(user1);
@@ -211,7 +209,6 @@ public class ServerHandler extends Thread {
             }
             singleton.setReceiveInvitationDto(new ReceiveInvitationDto());
             singleton.getGamesOn().remove(gameId);
-            this.gameId = -1;
         }
     }
 
