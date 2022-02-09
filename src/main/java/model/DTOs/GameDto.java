@@ -2,6 +2,7 @@ package model.DTOs;
 
 public class GameDto {
     private String playerOneName;
+    private String playerTwoName;
     private String whoWins;
 
     public String getWhoWins() {
@@ -28,5 +29,4 @@ public class GameDto {
         this.playerTwoName = playerTwoName;
     }
 
-    private String playerTwoName;
 }

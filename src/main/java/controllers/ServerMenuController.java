@@ -1,15 +1,17 @@
 package controllers;
 
+import com.jfoenix.controls.JFXButton;
+import com.server.HelloApplication;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.Entities.Game;
 import model.Entities.Record;
 import model.Entities.User;
+import serverHandler.Server;
 import services.GameServices;
 import services.RecordsServices;
 import services.UsersServices;
@@ -17,6 +19,7 @@ import services.UsersServices;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class ServerMenuController implements Initializable {
@@ -60,11 +63,17 @@ public class ServerMenuController implements Initializable {
     @FXML
     public TableColumn<Record, String> col_steps;
 
+    public JFXButton btnStop;
+    public JFXButton btnStart;
+    public JFXButton btnRefresh;
+    Server server= Server.getServer();
+
+
     ObservableList<User> usersObservableList = getUsers();
     ObservableList<Game> gamesObservableList = getGames();
     ObservableList<Record> recordsObservableList = getRecords();
 
-    public ObservableList<User> getUsers() {
+    private ObservableList<User> getUsers() {
         ObservableList<User> list = FXCollections.observableArrayList();
         UsersServices usersServices = new UsersServices();
         List<User> users = usersServices.getAllUsers();
@@ -93,6 +102,19 @@ public class ServerMenuController implements Initializable {
         }
         return list;
     }
+    private void refreshTables() {
+        usersObservableList.clear();
+        usersObservableList.addAll(getUsers());
+        users_table.refresh();
+        gamesObservableList.clear();
+        gamesObservableList.addAll(getGames());
+        games_table.refresh();
+        recordsObservableList.clear();
+        recordsObservableList.addAll(getRecords());
+        records_table.refresh();
+    }
+
+
 
     @FXML
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -119,6 +141,10 @@ public class ServerMenuController implements Initializable {
         col_requester_name.setCellValueFactory(new PropertyValueFactory<Record, String>("requesterName"));
         col_recorded_game_ID.setCellValueFactory(new PropertyValueFactory<Record, Integer>("gameId"));
         records_table.setItems(recordsObservableList);
-    }
 
+        btnStart.setOnAction(actionEvent -> {server.startServerHandlerThread();});
+        btnStop.setOnAction(actionEvent -> {server.stopServerHandlerThread();});
+        btnRefresh.setOnAction(actionEvent -> {refreshTables();});
+        HelloApplication.getStage().setOnCloseRequest(event -> {server.stopServerHandlerThread();});
+    }
 }
