@@ -156,26 +156,20 @@ public class ServerHandler extends Thread {
         if (player.equals(singleton.getGamesOn().get(gameId).get(0).serverHandlerUsername)) {
             try {
                 singleton.getGamesOn().get(gameId).get(1).dos.writeUTF(playerMoveObj.toString());
+                moves += move;
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
             try {
                 singleton.getGamesOn().get(gameId).get(0).dos.writeUTF(playerMoveObj.toString());
+                moves += move;
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        singleton.getGamesSteps().add(move);
-        if (singleton.getGamesSteps().size() == 1)
-            moves = move;
-        else if (singleton.getGamesSteps().size() == 9 || isFinished) {
-            rs.createRecord(moves, singleton.getReceiveInvitationDto().getUserName(), gameId);
-            moves = null;
-            singleton.getGamesSteps().clear();
-            singleton.getGamesOn().remove(gameId);
-        } else
-            moves = moves.concat(move);
 
     }
 

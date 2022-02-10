@@ -15,7 +15,7 @@ public class DbConnection {
                 e.printStackTrace();
             }
 
-            String url = "jdbc:mysql://localhost:3306/tictactoe?useSSL=false";
+            String url = "jdbc:mysql://localhost:3306/tictactoe";
 
             // Change them
             String username = "root";

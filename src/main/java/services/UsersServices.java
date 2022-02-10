@@ -21,7 +21,7 @@ public class UsersServices {
     // user CRUD
     public boolean createUser(String username, String password, int wins, int losses, int draws) {
         connection = new DbConnection().getConnection();
-        query = "insert into Users (userName,password,wins,losses,draws) values (?,?,?,?,?)";
+        query = "insert into users (userName,password,wins,losses,draws) values (?,?,?,?,?)";
         int rowsAffected = 0;
         Boolean result = false;
         try {
@@ -76,7 +76,7 @@ public class UsersServices {
     public void updateUser(User user) {
         connection = new DbConnection().getConnection();
 
-        query = "update Users set wins = ? , losses = ? , draws = ?  where userName = ?";
+        query = "update users set wins = ? , losses = ? , draws = ?  where userName = ?";
         try {
             this.preparedStatement = connection.prepareStatement(query);
             this.preparedStatement.setInt(1, user.getWins());
@@ -127,37 +127,24 @@ public class UsersServices {
         }
     }
 
-    public List<User> getAllOnlineUsers (){
-        List <User> onlineUsers = new ArrayList<User>();
-        String query = "select * from Users where isLoggedIn = true";
+    public List<User> getAllOnlineUsers() {
+        List<User> onlineUsers = new ArrayList<User>();
+        String query = "select * from users where isLoggedIn = true";
         if (connection == null)
             connection = new DbConnection().getConnection();
         try {
             statement = connection.createStatement();
-            ResultSet var =this.statement.executeQuery(query);
-            while(var.next()){
-                User user = new User(var.getString(1), var.getString(2),var.getInt(3),var.getInt(4),var.getInt(5));
-             onlineUsers.add(user);
+            ResultSet var = this.statement.executeQuery(query);
+            while (var.next()) {
+                User user = new User(var.getString(1), var.getString(2), var.getInt(3), var.getInt(4), var.getInt(5));
+                onlineUsers.add(user);
 
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return  onlineUsers;
+        return onlineUsers;
     }
-
-  /*  public void sendInvitation(String player1 , String player2){
-     Boolean check1= checkValidation(player1);
-     Boolean check2= checkValidation(player2);
-     if (check1 && check2){
-         User user1 = getUserByName(player1);
-         User user2= getUserByName(player2);
-
-     }
-    }
-
-   */
-
 
     public void logout(User user) {
         updateStatus(user, false);
