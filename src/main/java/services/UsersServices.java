@@ -113,17 +113,17 @@ public class UsersServices {
         }
     }
 
-    public boolean login(String username, String password) {
+    public User login(String username, String password) {
         try {
             User selectedUser = getUserByName(username);
             if (selectedUser != null && selectedUser.getPassword().equals(password)) {
                 updateStatus(selectedUser, true);
-                return true;
+                return selectedUser;
             } else
-                return false;
+                return null;
 
         } catch (NoSuchElementException ex) {
-            return false;
+            return null;
         }
     }
 

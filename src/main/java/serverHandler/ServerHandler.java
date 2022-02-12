@@ -226,10 +226,20 @@ public class ServerHandler extends Thread {
                         loginUsername = object.get("user").getAsString();
                         serverHandlerUsername = object.get("user").getAsString();
                         password = object.get("pass").getAsString();
-                        loginCheck = us.login(loginUsername, password);
+                        var loggedInUser = us.login(loginUsername, password);
                         us.saveChanges();
                         loginObj.addProperty("operation", "login");
-                        loginObj.addProperty("result", loginCheck);
+                        if (loggedInUser != null) {
+                            loginCheck = true;
+                            loginObj.addProperty("result", loginCheck);
+                            loginObj.addProperty("userName", loggedInUser.getUserName());
+                            loginObj.addProperty("wins", loggedInUser.getWins());
+                            loginObj.addProperty("losses", loggedInUser.getLosses());
+                            loginObj.addProperty("draws", loggedInUser.getDraws());
+                        } else {
+                            loginCheck = false;
+                            loginObj.addProperty("result", loginCheck);
+                        }
                         try {
                             dos.writeUTF(loginObj.toString());
                         } catch (IOException e) {
