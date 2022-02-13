@@ -4,6 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import model.DTOs.ReceiveInvitationDto;
+import model.DTOs.GameFinishedDto;
+import model.DTOs.SaveGameDto;
 import model.Entities.User;
 import services.GameServices;
 import services.RecordsServices;
@@ -15,7 +17,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ServerHandler extends Thread {
     private DataOutputStream dos;
@@ -26,7 +30,7 @@ public class ServerHandler extends Thread {
     private UsersServices us = new UsersServices();
     private GameServices gs = new GameServices();
     private static int gameId;
-    private static String moves;
+    private static Map<Integer, String> gameMoves = new HashMap<>();
     private Boolean isFinished = false;
     private RecordsServices rs = new RecordsServices();
     private Singleton singleton = Singleton.getInstance();
@@ -115,6 +119,8 @@ public class ServerHandler extends Thread {
                 }
             }
 
+            gameMoves.put(gameId, "");
+
             System.out.println("created game with od = "
                     + gameId + "has been sent to "
                     + player1 + " and "
@@ -129,6 +135,19 @@ public class ServerHandler extends Thread {
         }
 
         return null;
+    }
+
+    public void sendSaveGameRequest(ServerHandler opponentNameHandler) {
+        if (opponentNameHandler != null) {
+            JsonObject inv = new JsonObject();
+            inv.addProperty("operation", "receiveSaveGameInvitation");
+            inv.addProperty("opponentName", opponentNameHandler.serverHandlerUsername);
+            try {
+                opponentNameHandler.dos.writeUTF(inv.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void sendInvitation(String player1, ServerHandler player2) {
@@ -156,7 +175,9 @@ public class ServerHandler extends Thread {
         if (player.equals(singleton.getGamesOn().get(gameId).get(0).serverHandlerUsername)) {
             try {
                 singleton.getGamesOn().get(gameId).get(1).dos.writeUTF(playerMoveObj.toString());
-                moves += move;
+                var lastMove = gameMoves.get(gameId);
+                lastMove += move;
+                gameMoves.put(gameId, lastMove);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -164,8 +185,9 @@ public class ServerHandler extends Thread {
         } else {
             try {
                 singleton.getGamesOn().get(gameId).get(0).dos.writeUTF(playerMoveObj.toString());
-                moves += move;
-
+                var lastMove = gameMoves.get(gameId);
+                lastMove += move;
+                gameMoves.put(gameId, lastMove);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -173,7 +195,8 @@ public class ServerHandler extends Thread {
 
     }
 
-    public void finishGame(String winner, int gameId) {
+
+    public void finishGame(String winner, int gameId, boolean isSaved) {
         if (singleton.getGamesOn().get(gameId) != null) {
             User user1 = us.getUserByName(singleton.getReceiveInvitationDto().getUserName());
             User user2 = us.getUserByName(singleton.getReceiveInvitationDto().getOpponentUserName());
@@ -191,7 +214,6 @@ public class ServerHandler extends Thread {
                     us.updateUser(user1);
                     us.updateUser(user2);
                     gs.setWinner(gameId, 1);
-                    us.saveChanges();
                 } else {
                     user2.setWins(user2.getWins() + 1);
                     user1.setLosses(user1.getLosses() + 1);
@@ -201,7 +223,15 @@ public class ServerHandler extends Thread {
                     us.saveChanges();
                 }
             }
-            singleton.setReceiveInvitationDto(new ReceiveInvitationDto());
+
+            RecordsServices recordsServices = new RecordsServices();
+            var records = recordsServices.getAllRecords()
+                    .stream().filter(record -> record.getGameId() == gameId).toList();
+
+            if (isSaved && records.size() == 0) {
+                recordsServices.createRecord(gameMoves.get(gameId), user1.getUserName(), user2.getUserName(), gameId);
+            }
+
             singleton.getGamesOn().remove(gameId);
         }
     }
@@ -221,7 +251,7 @@ public class ServerHandler extends Thread {
                     case "login":
                         String password, loginUsername;
                         JsonObject loginObj = new JsonObject();
-                        JsonArray onlineObjs = new JsonArray();
+                        JsonArray onlineObjs;
                         boolean loginCheck;
                         loginUsername = object.get("user").getAsString();
                         serverHandlerUsername = object.get("user").getAsString();
@@ -321,14 +351,31 @@ public class ServerHandler extends Thread {
                         gameId = object.get("gameId").getAsInt();
                         sendPlayerMove(player, move, sign, gameState, gameId);
                         break;
+                    case "SaveGameInvitation":
+                        String opponentName = object.get("opponentName").getAsString();
+                        ServerHandler handler = getHandlerByUsername(opponentName);
+                        sendSaveGameRequest(handler);
+                        break;
+                    case "SaveGameInvitationResponse":
+                        String saveGameInvitationResponse = object.get("answer").getAsString();
+                        SaveGameDto saveGameDto = new SaveGameDto();
+                        if (saveGameInvitationResponse.equals("true")) {
+                            saveGameDto.setSaved(true);
+                            singleton.setSaveGameDto(saveGameDto);
+                        } else {
+                            System.out.println("Save game request has been rejected");
+                            saveGameDto.setSaved(false);
+                            singleton.setSaveGameDto(saveGameDto);
+                        }
+                        break;
                     case "gameFinished":
-                        String winner;
-                        int finishedGameId;
-                        isFinished = object.get("isFinished").getAsBoolean();
-                        finishedGameId = object.get("gameId").getAsInt();
-                        winner = object.get("winner").getAsString();
-                        if (isFinished) {
-                            finishGame(winner, finishedGameId);
+                        GameFinishedDto gameFinishedDto = new GameFinishedDto();
+                        gameFinishedDto.setFinishedGameId(object.get("gameId").getAsInt());
+                        gameFinishedDto.setWinner(object.get("winner").getAsString());
+                        if (singleton.getSaveGameDto() != null) {
+                            finishGame(gameFinishedDto.getWinner(), gameFinishedDto.getFinishedGameId(), singleton.getSaveGameDto().isSaved());
+                        } else {
+                            finishGame(gameFinishedDto.getWinner(), gameFinishedDto.getFinishedGameId(), false);
                         }
                         break;
                 }

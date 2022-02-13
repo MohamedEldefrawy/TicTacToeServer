@@ -3,6 +3,7 @@ package model.DTOs;
 public class RecordDto {
     private String steps;
     private String requesterName;
+    private String opponentName;
     private int gameId;
 
     public String getSteps() {

@@ -1,6 +1,7 @@
 package utilities;
 
 import model.DTOs.ReceiveInvitationDto;
+import model.DTOs.SaveGameDto;
 import serverHandler.ServerHandler;
 
 import java.util.ArrayList;
@@ -15,7 +16,15 @@ public class Singleton {
     private Map<Integer, List<ServerHandler>> gamesOn;
     private List<String> gamesSteps;
     private ReceiveInvitationDto receiveInvitationDto;
+    private SaveGameDto saveGameDto;
 
+    public SaveGameDto getSaveGameDto() {
+        return saveGameDto;
+    }
+
+    public void setSaveGameDto(SaveGameDto saveGameDto) {
+        this.saveGameDto = saveGameDto;
+    }
 
     private Singleton() {
         connectedClients = new ArrayList<>();

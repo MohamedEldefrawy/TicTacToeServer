@@ -1,9 +1,7 @@
 package services;
 
-import model.DTOs.RecordDto;
 import model.DbConnection;
 import model.Entities.Record;
-import model.Entities.User;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,27 +9,28 @@ import java.util.List;
 
 public class RecordsServices {
 
-    // Fields
-    private Connection connection;
-    private PreparedStatement preparedStatement;
-    private Statement statement;
-    private String query;
 
     // CRUD
-    public void createRecord(String moves,String player1,int gameId) {
-        connection = new DbConnection().getConnection();
-        query = "insert into records (steps,requesterName,gameId) values (?,?,?)";
+    public void createRecord(String moves, String player1, String player2, int gameId) {
+        try (Connection connection = new DbConnection().getConnection()) {
+            String firstPlayerQuery = "insert into records (steps,requesterName,gameId) values (?,?,?)";
+            String secondPlayerQuery = "insert into records (steps,requesterName,gameId) values (?,?,?)";
 
-        try {
-            connection.setAutoCommit(false);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        try {
-            this.preparedStatement = connection.prepareStatement(query);
-            this.preparedStatement.setString(1, moves);
-            this.preparedStatement.setString(2, player1);
-            this.preparedStatement.setInt(3, gameId);
+            var firstPlayerPreparedStatement = connection.prepareStatement(firstPlayerQuery);
+            firstPlayerPreparedStatement.setString(1, moves);
+            firstPlayerPreparedStatement.setString(2, player1);
+            firstPlayerPreparedStatement.setInt(3, gameId);
+            firstPlayerPreparedStatement.addBatch();
+            firstPlayerPreparedStatement.executeBatch();
+            firstPlayerPreparedStatement.close();
+
+            var secondPreparedStatement = connection.prepareStatement(secondPlayerQuery);
+            secondPreparedStatement.setString(1, moves);
+            secondPreparedStatement.setString(2, player2);
+            secondPreparedStatement.setInt(3, gameId);
+            secondPreparedStatement.addBatch();
+            secondPreparedStatement.executeBatch();
+            secondPreparedStatement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -39,12 +38,11 @@ public class RecordsServices {
 
     //Utilities
     public List<Record> getAllRecords() {
-        query = "select * from records";
-        if (connection == null)
-            connection = new DbConnection().getConnection();
-        List<Record> records = new ArrayList<>();
-        try {
-            statement = connection.createStatement();
+        try (Connection connection = new DbConnection().getConnection()) {
+            String query = "select * from records";
+            List<Record> records = new ArrayList<>();
+
+            Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
             while (resultSet.next()) {
                 Record record = new Record();
@@ -57,28 +55,11 @@ public class RecordsServices {
             statement.close();
             resultSet.close();
             connection.close();
+            return records;
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return records;
-    }
-
-
-
-
-
-
-
-    // Connection Utilities
-    public PreparedStatement getPreparedStatement() {
-        return preparedStatement;
-    }
-
-    public void closeConnection() throws SQLException {
-        connection.close();
-    }
-
-    public void saveChanges() throws SQLException {
-        connection.commit();
+        return null;
     }
 }
