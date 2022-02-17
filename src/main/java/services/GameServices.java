@@ -20,7 +20,7 @@ public class GameServices {
     private RecordsServices recordsServices;
 
     // user CRUD
-    public int startGame(String player1 , String player2) {
+    public int startGame(String player1, String player2) {
         if (connection == null)
             connection = new DbConnection().getConnection();
 
@@ -45,6 +45,7 @@ public class GameServices {
         }
         return getGamesId();
     }
+
     public int getGamesId() {
 
         if (connection == null)
@@ -66,21 +67,24 @@ public class GameServices {
         }
         return -1;
     }
+
     public void endGame(GameDto gameDto) {
         int gameId = getGameId();
         Game currentGame = getGameById(gameId);
         currentGame.setWinner(gameDto.getWhoWins());
     }
 
-    public  void setWinner(int gameId,int winner){
+    public void setWinner(int gameId, String winner) {
         connection = new DbConnection().getConnection();
         String query = "update games set Winner = ? where id = ?";
         try {
             this.preparedStatement = connection.prepareStatement(query);
-            this.preparedStatement.setInt(1,winner);
-            this.preparedStatement.setInt(2,gameId);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            this.preparedStatement.setString(1, winner);
+            this.preparedStatement.setInt(2, gameId);
+            this.preparedStatement.addBatch();
+            this.preparedStatement.executeBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
 
@@ -99,7 +103,7 @@ public class GameServices {
     }*/
 
     public LoadGameDto loadGame(RecordDto recordDto) {
-        query = "select g.id,playerOneName,playerTwoName,winner,timeStamp,requesterName,steps\n" +
+        query = "select distinct g.id,playerOneName,playerTwoName,winner,timeStamp,requesterName,steps\n" +
                 "from games  as g inner join records r \n" +
                 "on g.id = r.gameId\n" +
                 "where g.id = ?";

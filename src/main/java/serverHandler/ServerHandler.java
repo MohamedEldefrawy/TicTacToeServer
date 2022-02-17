@@ -200,12 +200,13 @@ public class ServerHandler extends Thread {
         if (singleton.getGamesOn().get(gameId) != null) {
             User user1 = us.getUserByName(singleton.getReceiveInvitationDto().getUserName());
             User user2 = us.getUserByName(singleton.getReceiveInvitationDto().getOpponentUserName());
+
             if (winner.equals("draw")) {
                 user1.setDraws(user1.getDraws() + 1);
                 user2.setDraws(user2.getDraws() + 1);
                 us.updateUser(user1);
                 us.updateUser(user2);
-                gs.setWinner(gameId, 0);
+                gs.setWinner(gameId, winner);
                 us.saveChanges();
             } else {
                 if (winner.equals(singleton.getReceiveInvitationDto().getUserName())) {
@@ -213,13 +214,13 @@ public class ServerHandler extends Thread {
                     user2.setLosses(user2.getLosses() + 1);
                     us.updateUser(user1);
                     us.updateUser(user2);
-                    gs.setWinner(gameId, 1);
+                    gs.setWinner(gameId, winner);
                 } else {
                     user2.setWins(user2.getWins() + 1);
                     user1.setLosses(user1.getLosses() + 1);
                     us.updateUser(user1);
                     us.updateUser(user2);
-                    gs.setWinner(gameId, 2);
+                    gs.setWinner(gameId, winner);
                     us.saveChanges();
                 }
             }
@@ -371,6 +372,7 @@ public class ServerHandler extends Thread {
                     case "gameFinished":
                         GameFinishedDto gameFinishedDto = new GameFinishedDto();
                         gameFinishedDto.setFinishedGameId(object.get("gameId").getAsInt());
+                        System.out.println(" winner name = " + object.get("winner").getAsString());
                         gameFinishedDto.setWinner(object.get("winner").getAsString());
                         if (singleton.getSaveGameDto() != null) {
                             finishGame(gameFinishedDto.getWinner(), gameFinishedDto.getFinishedGameId(), singleton.getSaveGameDto().isSaved());
