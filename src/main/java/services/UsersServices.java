@@ -21,14 +21,9 @@ public class UsersServices {
     // user CRUD
     public boolean createUser(String username, String password, int wins, int losses, int draws) {
         connection = new DbConnection().getConnection();
-        query = "insert into Users (userName,password,wins,losses,draws) values (?,?,?,?,?)";
+        query = "insert into users (userName,password,wins,losses,draws) values (?,?,?,?,?)";
         int rowsAffected = 0;
         Boolean result = false;
-        try {
-            connection.setAutoCommit(false);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
         try {
             this.preparedStatement = connection.prepareStatement(query);
             this.preparedStatement.setString(1, username);
@@ -41,6 +36,7 @@ public class UsersServices {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return rowsAffected > 0;
     }
 
@@ -72,24 +68,23 @@ public class UsersServices {
 
 
     public User getUserByName(String userName) {
-        return getAllUsers().stream().filter(user -> user.getUserName().equalsIgnoreCase(userName)).findFirst().get();
+        return getAllUsers().stream()
+                .filter(user -> user.getUserName().equals(userName))
+                .findFirst().get();
     }
 
     public void updateUser(User user) {
         connection = new DbConnection().getConnection();
 
-        query = "update Users set wins = ? , losses = ? , draws = ?  where userName = ?";
-        try {
-            connection.setAutoCommit(false);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        query = "update users set wins = ? , losses = ? , draws = ?  where userName = ?";
         try {
             this.preparedStatement = connection.prepareStatement(query);
             this.preparedStatement.setInt(1, user.getWins());
             this.preparedStatement.setInt(2, user.getLosses());
             this.preparedStatement.setInt(3, user.getDraws());
             this.preparedStatement.setString(4, user.getUserName());
+            this.preparedStatement.addBatch();
+            this.preparedStatement.executeBatch();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -98,7 +93,6 @@ public class UsersServices {
     public void updateStatus(User user, boolean isLoggedIn) {
         query = "update users set isLoggedIn = "
                 + isLoggedIn + " where userName = " + "'" + user.getUserName() + "'";
-
         if (connection == null)
             connection = new DbConnection().getConnection();
 
@@ -119,18 +113,37 @@ public class UsersServices {
         }
     }
 
-    public boolean login(String username, String password) {
+    public User login(String username, String password) {
         try {
             User selectedUser = getUserByName(username);
-            if (selectedUser.getPassword().equals(password)) {
+            if (selectedUser != null && selectedUser.getPassword().equals(password)) {
                 updateStatus(selectedUser, true);
-                return true;
+                return selectedUser;
             } else
-                return false;
+                return null;
 
         } catch (NoSuchElementException ex) {
-            return false;
+            return null;
         }
+    }
+
+    public List<User> getAllOnlineUsers() {
+        List<User> onlineUsers = new ArrayList<User>();
+        String query = "select * from users where isLoggedIn = true";
+        if (connection == null)
+            connection = new DbConnection().getConnection();
+        try {
+            statement = connection.createStatement();
+            ResultSet var = this.statement.executeQuery(query);
+            while (var.next()) {
+                User user = new User(var.getString(1), var.getString(2), var.getInt(3), var.getInt(4), var.getInt(5));
+                onlineUsers.add(user);
+
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return onlineUsers;
     }
 
     public void logout(User user) {
@@ -152,6 +165,7 @@ public class UsersServices {
 
     public void saveChanges() {
         try {
+            connection.setAutoCommit(false);
             connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();

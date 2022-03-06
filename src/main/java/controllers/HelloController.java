@@ -4,8 +4,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import model.DTOs.LoginUserDto;
-import model.Utilities.JsonBuilder;
 import services.GameServices;
 import services.RecordsServices;
 import services.UsersServices;
