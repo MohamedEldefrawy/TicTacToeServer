@@ -45,6 +45,11 @@ We are using normal java naming convention for declaring
 ## Features
 
 - Server side Features:
+   - Start/Stop server
+   - show all players
+      - player wins,losses and draws
+      - player status (online, offline)
+   - show all saved games  
 
 [//]: # (    - see a list of all users.)
 
