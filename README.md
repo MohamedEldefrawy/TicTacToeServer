@@ -30,6 +30,7 @@ TicTacToe Server project
     4. open cmd and type ```mvn --version``` to test maven
 3. open terminal in intellij and use ```mvn install```
 4. make sure you are using JDK17
+5. go to /src/main/resources/Deployment and run ``` java -jar Server.jar ```
 
 ## Development
 
