@@ -1,4 +1,4 @@
-# TicTacToeClient
+# TicTacToeServer
 
 TicTacToe Server project
 
@@ -55,7 +55,6 @@ TicTacToe Server project
 - player wins,losses and draws
 - player status (online, offline)
 - show all saved games
-
 
 ## Built with
 
