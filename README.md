@@ -1,69 +1,75 @@
 # TicTacToeClient
-ITI TicTacToe Client project
 
-## Steps
-1. Clone project
-2. Create local branch name **Development**
-   1. command  ```git branch Development ```
-3. Checkout to the Development branch
-   1. command ```git checkout Development```
-4. Lat step clone the Development branch to your local Development branch
-   1. command ```git pull origin Development```
+TicTacToe Server project
 
-## Note
-When developing make sure you are using your local Development branch and when push your changes make sure push top the remote Development branch
+## Table of contents
 
+- [Overview](#overview)
+    - [GIF](#GIF)
+- [Run](#Run)
+- [Development](#my-process)
+    - [Built with](#built-with)
+- [Features](#features)
+- [Author](#authors)
+
+## Overview
+
+### GIF
+
+![screen-gif](./src/main/resources/Deployment/Server-Gif.gif)
+
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 ## To run the project
+
 1. Install **[IntelliJ](https://www.jetbrains.com/idea/download/#section=windows)**
 2. Install **[Maven](https://dlcdn.apache.org/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.zip)**
-   1. Unzip downloaded file and copy unzipped folder to **C:\Program Files**
-   2. **Edit** Environment variable path add **new**  **C:\Program Files\apache-maven-3.8.2\bin**
-   3. **New** Environment variable with name **MAVEN_HOME** and url **C:\Program Files\apache-maven-3.8.2**
-   4. open cmd and type ```mvn --version``` to test maven
+    1. Unzip downloaded file and copy unzipped folder to **C:\Program Files**
+    2. **Edit** Environment variable path add **new**  **C:\Program Files\apache-maven-3.8.2\bin**
+    3. **New** Environment variable with name **MAVEN_HOME** and url **C:\Program Files\apache-maven-3.8.2**
+    4. open cmd and type ```mvn --version``` to test maven
 3. open terminal in intellij and use ```mvn install```
 4. make sure you are using JDK17
 
-## Naming convention of project
-We are using normal java naming convention for declaring
-- Classes,interfaces and Enums declaration **PascalCase** 
-  - Example : ```class ExampleCale {}```
-- methods , local variable and instance variable **camelCase**
-  - Example : ```int localVariable = 10;
-  public void methodName(){} ```
-- constants will be **UPPERCASE**
-    - Example ```int final CONSTANT = 10;```
+## Development
 
-### For UI fields
+1) Clone the project
 
-- **Button** field will start its name with btn
-    - Example ```Button btnClick;```
-- different **Text** fields will start its name with txt
-    - Example ```TextArea txtChatArea;```
-      And so on.
+   ``` https://github.com/MohamedEldefrawy/TicTacToeServer.git ```
+
+1. Clone project
+2. Create local branch name **Development**
+    1. command  ```git branch Development ```
+3. Checkout to the Development branch
+    1. command ```git checkout Development```
+4. Lat step clone the Development branch to your local Development branch
+    1. command ```git pull origin Development```
+
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Features
 
 - Server side Features:
-   - Start/Stop server
-   - show all players
-      - player wins,losses and draws
-      - player status (online, offline)
-   - show all saved games  
+- Start/Stop server
+- show all players
+- player wins,losses and draws
+- player status (online, offline)
+- show all saved games
 
-[//]: # (    - see a list of all users.)
 
-[//]: # (    - see players status and score.)
+## Built with
 
-[//]: # (    - close and reopen the server.)
-
-[//]: # (  )
-
-## Stack used
-
+- **[JafaFx](https://openjfx.io/)**
 - Material design library **[JFoenix](http://www.jfoenix.com/)**
 - Dependency manger **[Maven](https://maven.apache.org/)**
-- MySql  **[MySql](https://dev.mysql.com/downloads/connector/j/)**
+- **[MySql](https://dev.mysql.com/downloads/connector/j/)**
 - Java Serialization/Deserialization library **[Gson](https://github.com/google/gson)**
 
+<p align="right">(<a href="#top">back to top</a>)</p>
 
+## Authors
+
+* LinkedIn - [Mohamed Eldefrawy](https://www.linkedin.com/in/mohamedeldefrawy)
+* LinkedIn - [Mohamed Emad](https://www.linkedin.com/in/mohamed-emad-528570b1)
+* LinkedIn - [Mahitab Mohsen](https://www.linkedin.com/in/mahitab-mohsen-5446401bb/)
+* LinkedIn - [Abdorrahman Ramadan](https://www.linkedin.com/in/abdorrahman-ramadan-696498161/)
